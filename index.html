@@ -394,33 +394,65 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(10, 10, 10, 0.98);
-            backdrop-filter: blur(20px);
+            background: #0a0a0a;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: stretch;
             justify-content: flex-start;
-            padding-top: var(--space-xl);
-            gap: var(--space-md);
+            padding: var(--space-xl) var(--container-padding);
+            gap: 0;
             list-style: none;
             transform: translateX(100%);
             transition: transform 0.3s ease;
             z-index: 999;
+            overflow-y: auto;
         }
 
         .nav-links.active {
             transform: translateX(0);
         }
 
+        .nav-links li {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-links li:last-child {
+            border-bottom: none;
+        }
+
+        .nav-dropdown-content {
+            display: none;
+            position: static;
+            background: transparent;
+            border: none;
+            padding: 0 0 0 1rem;
+        }
+
+        .nav-dropdown.active .nav-dropdown-content {
+            display: block;
+        }
+
+        .nav-dropdown-content a {
+            padding: 0.75rem 1rem !important;
+            font-size: 0.9rem !important;
+            opacity: 0.8;
+        }
+
         .nav-links a {
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: var(--text-lg);
+            font-size: 1.125rem;
             font-weight: 500;
-            padding: var(--space-md) var(--space-xl);
-            transition: color 0.2s;
+            padding: 1rem 0.5rem;
+            transition: all 0.2s;
             width: 100%;
-            text-align: center;
+            text-align: left;
+            display: block;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+            padding-left: 0.75rem;
         }
 
         .nav-links a:hover {
@@ -430,12 +462,18 @@
         .nav-cta {
             background: var(--accent) !important;
             color: var(--bg) !important;
-            border-radius: 100px;
+            border-radius: 8px;
             margin-top: var(--space-md);
             font-weight: 600 !important;
+            text-align: center !important;
+            padding: 1rem !important;
         }
 
-        /* Dropdown for services */
+        .nav-cta:hover {
+            background: var(--accent-light) !important;
+        }
+
+        /* Dropdown for services - Desktop only */
         .nav-dropdown {
             position: relative;
         }
@@ -449,7 +487,7 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 0.5rem 0;
-            min-width: 200px;
+            min-width: 220px;
             z-index: 1001;
         }
 
@@ -459,9 +497,25 @@
 
         .nav-dropdown-content a {
             display: block;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1rem;
             font-size: 0.875rem;
             white-space: nowrap;
+            text-align: left;
+        }
+
+        .nav-dropdown-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-dropdown-arrow {
+            font-size: 0.75rem;
+            transition: transform 0.2s;
+        }
+
+        .nav-dropdown.active .nav-dropdown-arrow {
+            transform: rotate(180deg);
         }
 
         /* ============================================
@@ -1628,11 +1682,13 @@
                 <li role="none"><a href="/#solucion" role="menuitem">Solución</a></li>
                 <li role="none"><a href="/#proyectos" role="menuitem">Proyectos</a></li>
                 <li role="none" class="nav-dropdown">
-                    <a href="#" role="menuitem">Servicios ▾</a>
+                    <a href="#" class="nav-dropdown-toggle" role="menuitem" onclick="toggleDropdown(event)">
+                        Servicios <span class="nav-dropdown-arrow">▼</span>
+                    </a>
                     <div class="nav-dropdown-content">
-                        <a href="/servicios/webflow-mexico/">Webflow México</a>
-                        <a href="/servicios/nextjs-mexico/">Next.js México</a>
-                        <a href="/servicios/landing-pages/">Landing Pages</a>
+                        <a href="/servicios/webflow-mexico/" onclick="closeMobileMenu()">Webflow México</a>
+                        <a href="/servicios/nextjs-mexico/" onclick="closeMobileMenu()">Next.js México</a>
+                        <a href="/servicios/landing-pages/" onclick="closeMobileMenu()">Landing Pages</a>
                     </div>
                 </li>
                 <li role="none"><a href="/blog/" role="menuitem">Blog</a></li>
@@ -2160,20 +2216,46 @@
         const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
         const navLinks = document.querySelector('.nav-links');
         
+        function closeMobileMenu() {
+            navLinks.classList.remove('active');
+            mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            mobileMenuBtn.textContent = '☰';
+            // Close all dropdowns
+            document.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('active'));
+        }
+
+        function toggleDropdown(e) {
+            // Only toggle on mobile
+            if (window.innerWidth < 1024) {
+                e.preventDefault();
+                e.stopPropagation();
+                const dropdown = e.target.closest('.nav-dropdown');
+                dropdown.classList.toggle('active');
+            }
+        }
+        
         mobileMenuBtn.addEventListener('click', () => {
             const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
             mobileMenuBtn.setAttribute('aria-expanded', !isExpanded);
             navLinks.classList.toggle('active');
             mobileMenuBtn.textContent = isExpanded ? '☰' : '✕';
+            if (isExpanded) {
+                document.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('active'));
+            }
         });
 
-        // Close menu when clicking a link
+        // Close menu when clicking a link (except dropdown toggles)
         navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                mobileMenuBtn.setAttribute('aria-expanded', 'false');
-                mobileMenuBtn.textContent = '☰';
-            });
+            if (!link.classList.contains('nav-dropdown-toggle')) {
+                link.addEventListener('click', closeMobileMenu);
+            }
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                closeMobileMenu();
+            }
         });
 
         // Scroll Animations

@@ -201,6 +201,75 @@
             font-weight: 600 !important;
         }
 
+        /* Mobile Navigation */
+        .mobile-menu-btn {
+            display: none;
+            width: 44px;
+            height: 44px;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--bg-secondary);
+        }
+
+        @media (max-width: 1023px) {
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: #0a0a0a;
+                flex-direction: column;
+                align-items: stretch;
+                padding: 1.5rem 1rem;
+                gap: 0;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+                overflow-y: auto;
+            }
+
+            .nav-links.active {
+                transform: translateX(0);
+            }
+
+            .nav-links li {
+                border-bottom: 1px solid var(--border);
+            }
+
+            .nav-links a {
+                font-size: 1.125rem;
+                padding: 1rem 0.5rem;
+                display: block;
+                text-align: left;
+            }
+
+            .nav-links a:hover {
+                color: var(--accent);
+                padding-left: 0.75rem;
+            }
+
+            .nav-cta {
+                margin-top: 1rem;
+                text-align: center !important;
+                border-radius: 8px !important;
+            }
+        }
+
         /* Breadcrumb */
         .breadcrumb {
             padding-top: 100px;
@@ -370,10 +439,6 @@
         }
 
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
             .blog-grid {
                 grid-template-columns: 1fr;
             }
@@ -386,18 +451,21 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     
     <!-- Navigation -->
-    <nav>
+    <nav id="navbar" role="navigation" aria-label="Navegación principal">
         <div class="container">
-            <a href="/" class="logo">
-                <span class="logo-mark">A</span>
+            <a href="/" class="logo" aria-label="Asahi Studio - Inicio">
+                <span class="logo-mark" aria-hidden="true">A</span>
                 Asahi Studio
             </a>
-            <ul class="nav-links">
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/servicios/webflow-mexico/">Webflow</a></li>
-                <li><a href="/servicios/nextjs-mexico/">Next.js</a></li>
-                <li><a href="/blog/">Blog</a></li>
-                <li><a href="/#contacto" class="nav-cta">Cotizar</a></li>
+            <button class="mobile-menu-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-links">
+                ☰
+            </button>
+            <ul class="nav-links" id="nav-links" role="menubar">
+                <li role="none"><a href="/" role="menuitem">Inicio</a></li>
+                <li role="none"><a href="/servicios/webflow-mexico/" role="menuitem">Webflow</a></li>
+                <li role="none"><a href="/servicios/nextjs-mexico/" role="menuitem">Next.js</a></li>
+                <li role="none"><a href="/blog/" style="color: var(--accent);" role="menuitem">Blog</a></li>
+                <li role="none"><a href="/#contacto" class="nav-cta" role="menuitem">Cotizar</a></li>
             </ul>
         </div>
     </nav>
@@ -537,5 +605,36 @@
             <p>© 2025 Asahi Studio. Hecho con propósito en León, Guanajuato.</p>
         </div>
     </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+            mobileMenuBtn.setAttribute('aria-expanded', !isExpanded);
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.textContent = isExpanded ? '☰' : '✕';
+        });
+
+        // Close menu when clicking a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                mobileMenuBtn.textContent = '☰';
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                mobileMenuBtn.textContent = '☰';
+            }
+        });
+    </script>
 </body>
 </html>
