@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "name": "asahi-studio",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/webflow",
+      "destination": "/servicios/webflow-mexico/index.html"
+    },
+    {
+      "source": "/nextjs",
+      "destination": "/servicios/nextjs-mexico/index.html"
+    },
+    {
+      "source": "/landing",
+      "destination": "/servicios/landing-pages/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/old",
+      "destination": "/",
+      "permanent": true
+    }
+  ]
+}
