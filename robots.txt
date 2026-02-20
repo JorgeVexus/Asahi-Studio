@@ -2,11 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://asahi.studio/sitemap.xml
+Sitemap: https://asahistudio.lat/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1
-
-# Disallow patterns (if needed in future)
-# Disallow: /admin/
-# Disallow: /private/
