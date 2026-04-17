@@ -41,18 +41,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Data Logic ---
     async function fetchResponses() {
-        const { data, error } = await supabase
+        // Fetch Onboardings
+        const { data: onboardingData, error: onboardingError } = await supabase
             .from('onboarding_responses')
             .select('*')
             .order('created_at', { ascending: false });
 
-        if (error) {
-            console.error(error);
-            return;
+        if (!onboardingError) {
+            renderTable(onboardingData);
+            updateOnboardingStats(onboardingData);
         }
 
-        renderTable(data);
-        updateStats(data);
+        // Fetch Pending Tickets
+        const { data: ticketData, error: ticketError } = await supabase
+            .from('asahi_tickets')
+            .select('id')
+            .neq('status', 'completado');
+
+        if (!ticketError) {
+            document.getElementById('pendingTicketsCount').textContent = ticketData.length;
+        }
     }
 
     function renderTable(data) {
@@ -74,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function updateStats(data) {
+    function updateOnboardingStats(data) {
         totalCount.textContent = data.length;
         const today = new Date().toISOString().split('T')[0];
         const countToday = data.filter(d => d.created_at.startsWith(today)).length;

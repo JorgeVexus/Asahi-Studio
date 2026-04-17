@@ -311,6 +311,9 @@
                 <span>Dashboard Asahi</span>
             </div>
             <div class="user-nav">
+                <a href="/dashboard/tickets.html" style="color: var(--accent); text-decoration: none; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="ticket" size="18"></i> Tickets
+                </a>
                 <span id="userEmail" class="hide-mobile"></span>
                 <button class="btn-logout" id="logoutBtn">
                     <i data-lucide="log-out" size="18"></i> Salir
@@ -323,6 +326,10 @@
                 <div class="stat-card">
                     <div class="stat-label">Total Onboardings</div>
                     <div class="stat-value" id="totalCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Ajustes Pendientes</div>
+                    <div class="stat-value" id="pendingTicketsCount">0</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Nuevos (Hoy)</div>
