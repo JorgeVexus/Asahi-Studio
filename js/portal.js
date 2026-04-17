@@ -47,11 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Data Logic ---
     async function fetchTickets() {
+        // Obtenemos los tickets filtrados por correo
         const { data, error } = await supabase
             .from('asahi_tickets')
             .select('*')
             .eq('client_email', currentEmail)
-            .order('created_at', { ascending: false });
+            .order('last_message_at', { ascending: false });
 
         if (error) {
             console.error(error);
@@ -67,9 +68,13 @@ document.addEventListener('DOMContentLoaded', () => {
         ticketsList.innerHTML = data.map(ticket => `
             <div class="ticket-item" onclick="openChat('${ticket.id}', '${ticket.subject}', '${ticket.status}')">
                 <div class="ticket-info">
-                    <h3>${ticket.subject}</h3>
+                    <div style="display: flex; align-items: center;">
+                        ${ticket.unread_client ? '<span class="unread-badge"></span>' : ''}
+                        <h3>${ticket.subject}</h3>
+                    </div>
                     <div class="ticket-meta">
-                        <span><i data-lucide="clock" size="12"></i> ${new Date(ticket.created_at).toLocaleDateString()}</span>
+                        <span class="category-tag">${ticket.category || 'AJUSTES'}</span>
+                        <span><i data-lucide="clock" size="12"></i> ${new Date(ticket.last_message_at).toLocaleDateString()}</span>
                         <span><i data-lucide="alert-circle" size="12"></i> ${ticket.priority}</span>
                     </div>
                 </div>
@@ -84,63 +89,86 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('newTicketModal').style.display = 'block';
     });
 
-    async function uploadFile(file) {
-        if (!file) return null;
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-        const filePath = `${currentEmail}/${fileName}`;
+    async function uploadFiles(files) {
+        if (!files || files.length === 0) return [];
+        
+        const uploadPromises = Array.from(files).map(async (file) => {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+            const filePath = `${currentEmail}/${fileName}`;
 
-        const { error: uploadError, data } = await supabase.storage
-            .from('tickets')
-            .upload(filePath, file);
+            const { error: uploadError } = await supabase.storage
+                .from('tickets')
+                .upload(filePath, file);
 
-        if (uploadError) {
-            console.error('Error uploading:', uploadError);
-            return null;
-        }
+            if (uploadError) {
+                console.error('Error uploading:', uploadError);
+                return null;
+            }
 
-        const { data: { publicUrl } } = supabase.storage
-            .from('tickets')
-            .getPublicUrl(filePath);
+            const { data: { publicUrl } } = supabase.storage
+                .from('tickets')
+                .getPublicUrl(filePath);
 
-        return { url: publicUrl, name: file.name, type: file.type };
+            return { url: publicUrl, name: file.name, type: file.type };
+        });
+
+        const results = await Promise.all(uploadPromises);
+        return results.filter(res => res !== null);
     }
 
     newTicketForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando...';
+
         const subject = document.getElementById('ticketSubject').value;
         const content = document.getElementById('ticketContent').value;
         const priority = document.getElementById('ticketPriority').value;
+        const category = document.getElementById('ticketCategory').value;
         const fileInput = document.getElementById('ticketFile');
-        const file = fileInput.files[0];
 
-        // 1. Upload file if exists
-        const attachment = await uploadFile(file);
-        const attachments = attachment ? [attachment] : [];
+        try {
+            // 1. Upload files if exist
+            const attachments = await uploadFiles(fileInput.files);
 
-        // 2. Create Ticket
-        const { data: ticket, error: tError } = await supabase
-            .from('asahi_tickets')
-            .insert([{ client_email: currentEmail, subject, priority }])
-            .select()
-            .single();
+            // 2. Create Ticket
+            const { data: ticket, error: tError } = await supabase
+                .from('asahi_tickets')
+                .insert([{ 
+                    client_email: currentEmail, 
+                    subject, 
+                    priority, 
+                    category,
+                    last_message_at: new Date().toISOString()
+                }])
+                .select()
+                .single();
 
-        if (tError) {
-            alert('Error creating ticket');
-            return;
-        }
+            if (tError) throw tError;
 
-        // 3. Create first message
-        const { error: mError } = await supabase
-            .from('asahi_ticket_messages')
-            .insert([{ ticket_id: ticket.id, sender_type: 'client', content, attachments }]);
+            // 3. Create first message
+            const { error: mError } = await supabase
+                .from('asahi_ticket_messages')
+                .insert([{ 
+                    ticket_id: ticket.id, 
+                    sender_type: 'client', 
+                    content, 
+                    attachments 
+                }]);
 
-        if (mError) {
-            alert('Error creating message');
-        } else {
+            if (mError) throw mError;
+
             document.getElementById('newTicketModal').style.display = 'none';
             newTicketForm.reset();
             fetchTickets();
+        } catch (err) {
+            console.error(err);
+            alert('Error al crear el ticket. Inténtalo de nuevo.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Enviar Solicitud';
         }
     });
 
@@ -169,18 +197,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const chatMessages = document.getElementById('chatMessages');
         chatMessages.innerHTML = data.map(msg => {
             const attachmentsHtml = (msg.attachments || []).map(att => {
-                if (att.type.startsWith('image/')) {
-                    return `<img src="${att.url}" style="max-width: 100%; border-radius: 8px; margin-top: 0.5rem; display: block; border: 1px solid rgba(255,255,255,0.1);">`;
+                if (att.type && att.type.startsWith('image/')) {
+                    return `
+                        <div class="attachment-item" onclick="window.open('${att.url}', '_blank')">
+                            <img src="${att.url}" alt="${att.name}">
+                        </div>`;
                 }
-                return `<a href="${att.url}" target="_blank" style="display: flex; align-items: center; gap: 0.5rem; color: var(--text); background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 6px; margin-top: 0.5rem; text-decoration: none; font-size: 0.8rem;">
-                    <i data-lucide="file"></i> ${att.name}
-                </a>`;
+                return `
+                    <div class="attachment-item" onclick="window.open('${att.url}', '_blank')" title="${att.name}">
+                        <div class="file-icon"><i data-lucide="file-text"></i></div>
+                    </div>`;
             }).join('');
 
             return `
                 <div class="message msg-${msg.sender_type}">
                     <div class="content">${msg.content}</div>
-                    ${attachmentsHtml}
+                    ${attachmentsHtml ? `<div class="attachments-grid">${attachmentsHtml}</div>` : ''}
                     <div class="msg-meta">${msg.sender_type === 'admin' ? 'Asahi Studio' : 'Tú'} • ${new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
                 </div>
             `;
@@ -191,24 +223,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const content = document.getElementById('chatInput').value;
-        const file = chatFile.files[0];
-        if ((!content && !file) || !currentTicketId) return;
+        const input = document.getElementById('chatInput');
+        const content = input.value;
+        const files = chatFile.files;
+        if ((!content && files.length === 0) || !currentTicketId) return;
 
-        const attachment = await uploadFile(file);
-        const attachments = attachment ? [attachment] : [];
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
 
-        const { error } = await supabase
-            .from('asahi_ticket_messages')
-            .insert([{ ticket_id: currentTicketId, sender_type: 'client', content, attachments }]);
+        try {
+            const attachments = await uploadFiles(files);
 
-        if (!error) {
-            document.getElementById('chatInput').value = '';
-            chatFile.value = '';
-            filePreview.style.display = 'none';
-            fetchMessages(currentTicketId);
+            const { error } = await supabase
+                .from('asahi_ticket_messages')
+                .insert([{ 
+                    ticket_id: currentTicketId, 
+                    sender_type: 'client', 
+                    content, 
+                    attachments 
+                }]);
+
+            if (!error) {
+                input.value = '';
+                chatFile.value = '';
+                filePreview.style.display = 'none';
+                fetchMessages(currentTicketId);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            submitBtn.disabled = false;
         }
     });
+
+    // --- Global Actions ---
+    window.openChat = async (id, subject, status) => {
+        currentTicketId = id;
+        document.getElementById('chatModal').style.display = 'block';
+        document.getElementById('chatTitle').textContent = subject;
+        document.getElementById('chatStatus').innerHTML = `<span class="status-badge status-${status}">${status.replace('_', ' ')}</span>`;
+        
+        // Mark as read for client when opening
+        await supabase
+            .from('asahi_tickets')
+            .update({ unread_client: false })
+            .eq('id', id);
+
+        fetchMessages(id);
+        fetchTickets(); // Refresh list to remove unread badge
+    };
 
     // Subscriptions for Real-time
     const messagesSubscription = supabase
@@ -216,6 +279,20 @@ document.addEventListener('DOMContentLoaded', () => {
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'asahi_ticket_messages' }, payload => {
             if (payload.new.ticket_id === currentTicketId) {
                 fetchMessages(currentTicketId);
+            } else {
+                fetchTickets(); // Refresh list to show unread badges for other tickets
+            }
+        })
+        .subscribe();
+
+    const ticketsSubscription = supabase
+        .channel('public:asahi_tickets')
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'asahi_tickets' }, payload => {
+            if (payload.new.client_email === currentEmail) {
+                fetchTickets();
+                if (currentTicketId === payload.new.id) {
+                    document.getElementById('chatStatus').innerHTML = `<span class="status-badge status-${payload.new.status}">${payload.new.status.replace('_', ' ')}</span>`;
+                }
             }
         })
         .subscribe();

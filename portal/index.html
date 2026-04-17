@@ -156,18 +156,62 @@
             gap: 1rem;
         }
 
-        .status-badge {
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
         .status-nuevo { background: rgba(255,107,74,0.1); color: var(--accent); }
         .status-en_proceso { background: rgba(245,158,11,0.1); color: var(--warning); }
         .status-revision { background: rgba(16,185,129,0.1); color: var(--success); }
         .status-completado { background: #222; color: var(--text-secondary); }
+
+        .unread-badge {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        /* Attachments Grid */
+        .attachments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .attachment-item {
+            width: 80px;
+            height: 80px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            position: relative;
+            background: var(--bg);
+            cursor: pointer;
+        }
+
+        .attachment-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .attachment-item .file-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+        }
+
+        .category-tag {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
 
         /* Generic UI */
         .form-group { margin-bottom: 1.25rem; text-align: left; }
@@ -351,8 +395,18 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Adjuntar Captura o Documento (Opcional)</label>
-                    <input type="file" id="ticketFile" style="padding: 0.5rem; border: dashed 1px var(--border);">
+                    <label>Categoría</label>
+                    <select id="ticketCategory">
+                        <option value="Ajustes" selected>Ajustes Generales</option>
+                        <option value="Diseño">Diseño / UI</option>
+                        <option value="Desarrollo">Desarrollo / Funcionalidad</option>
+                        <option value="Contenido">Contenido / Textos</option>
+                        <option value="Soporte">Soporte Técnico</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Adjuntar Capturas o Documentos</label>
+                    <input type="file" id="ticketFile" multiple style="padding: 0.5rem; border: dashed 1px var(--border);">
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Enviar Solicitud</button>
             </form>
@@ -375,7 +429,7 @@
                     <input type="text" id="chatInput" placeholder="Escribe un mensaje..." required style="flex: 1;">
                     <label for="chatFile" class="btn btn-outline" style="padding: 0.75rem; cursor: pointer; margin-bottom: 0;">
                         <i data-lucide="paperclip"></i>
-                        <input type="file" id="chatFile" style="display: none;">
+                        <input type="file" id="chatFile" multiple style="display: none;">
                     </label>
                     <button type="submit" class="btn btn-primary"><i data-lucide="send"></i></button>
                 </div>

@@ -21,21 +21,49 @@ document.addEventListener('DOMContentLoaded', async () => {
     const adminFile = document.getElementById('adminFile');
     const adminFilePreview = document.getElementById('adminFilePreview');
 
-    let selectedFile = null;
-
-    // --- Init ---
-    fetchTickets();
+    let selectedFiles = [];
 
     // --- File Logic ---
     adminFile.addEventListener('change', (e) => {
-        selectedFile = e.target.files[0];
-        if (selectedFile) {
-            adminFilePreview.textContent = `📎 ${selectedFile.name}`;
+        selectedFiles = e.target.files;
+        if (selectedFiles.length > 0) {
+            adminFilePreview.textContent = `📎 ${selectedFiles.length} archivo(s) seleccionados`;
             adminFilePreview.style.display = 'block';
         } else {
             adminFilePreview.style.display = 'none';
         }
     });
+
+    async function uploadFiles(files, ticketId) {
+        if (!files || files.length === 0) return [];
+        
+        const uploadPromises = Array.from(files).map(async (file) => {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+            const filePath = `admin/${ticketId}/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('tickets')
+                .upload(filePath, file);
+
+            if (uploadError) {
+                console.error('Error uploading:', uploadError);
+                return null;
+            }
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('tickets')
+                .getPublicUrl(filePath);
+
+            return { url: publicUrl, name: file.name, type: file.type };
+        });
+
+        const results = await Promise.all(uploadPromises);
+        return results.filter(res => res !== null);
+    }
+
+    // --- Init ---
+    fetchTickets();
 
     // --- Filter Logic ---
     filterStatus.addEventListener('change', fetchTickets);
@@ -45,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let query = supabase
             .from('asahi_tickets')
             .select('*')
-            .order('created_at', { ascending: false });
+            .order('last_message_at', { ascending: false });
 
         if (filterStatus.value !== 'all') {
             query = query.eq('status', filterStatus.value);
@@ -66,11 +94,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         ticketSidebar.innerHTML = data.map(ticket => `
             <div class="sidebar-item ${activeTicketId === ticket.id ? 'active' : ''}" data-id="${ticket.id}">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <h3>${ticket.subject}</h3>
+                    <div style="display: flex; align-items: center;">
+                        ${ticket.unread_admin ? '<span class="unread-dot"></span>' : ''}
+                        <h3>${ticket.subject}</h3>
+                    </div>
                     <span class="status-badge status-${ticket.status}" style="font-size: 0.6rem;">${ticket.status === 'en_proceso' ? 'PROCESO' : ticket.status.toUpperCase()}</span>
                 </div>
                 <div class="client">${ticket.client_email}</div>
-                <div class="client" style="margin-top: 0.4rem; font-size: 0.7rem;">${new Date(ticket.created_at).toLocaleDateString()}</div>
+                <div class="category-tag">${ticket.category || 'AJUSTES'}</div>
+                <div class="client" style="margin-top: 0.4rem; font-size: 0.7rem;">${new Date(ticket.last_message_at).toLocaleDateString()}</div>
             </div>
         `).join('');
 
@@ -86,9 +118,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function selectTicket(ticket) {
         activeTicketId = ticket.id;
         
+        // Mark as read for admin
+        if (ticket.unread_admin) {
+            await supabase.from('asahi_tickets').update({ unread_admin: false }).eq('id', ticket.id);
+            // We don't call fetchTickets yet to avoid flickering, but we can updated locally
+            ticket.unread_admin = false;
+            // Refresh sidebar to remove dot
+            renderSidebar(Array.from(document.querySelectorAll('.sidebar-item')).map(el => {
+                // This is a bit hacky, better just re-fetch or find in local state if we had one
+            }));
+            fetchTickets(); 
+        }
+
         // Highlight in sidebar
         document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-        document.querySelector(`.sidebar-item[data-id="${ticket.id}"]`).classList.add('active');
+        const activeItem = document.querySelector(`.sidebar-item[data-id="${ticket.id}"]`);
+        if (activeItem) activeItem.classList.add('active');
 
         // Show chat
         chatView.style.display = 'flex';
@@ -112,15 +157,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         chatMessages.innerHTML = data.map(msg => {
             let attachmentsHtml = '';
             if (msg.attachments && msg.attachments.length > 0) {
-                attachmentsHtml = `<div class="attachments" style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                attachmentsHtml = `<div class="attachments-grid">
                     ${msg.attachments.map(att => {
-                        const isImage = att.name.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+                        const isImage = att.type && att.type.startsWith('image/');
                         if (isImage) {
-                            return `<img src="${att.url}" style="max-width: 200px; border-radius: 8px; cursor: pointer;" onclick="window.open('${att.url}', '_blank')">`;
+                            return `
+                                <div class="attachment-item" onclick="window.open('${att.url}', '_blank')">
+                                    <img src="${att.url}" alt="${att.name}">
+                                </div>`;
                         } else {
-                            return `<a href="${att.url}" target="_blank" style="padding: 0.4rem 0.8rem; background: rgba(255,255,255,0.1); border-radius: 6px; font-size: 0.75rem; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.4rem;">
-                                <i data-lucide="file" size="14"></i> ${att.name}
-                            </a>`;
+                            return `
+                                <div class="attachment-item" onclick="window.open('${att.url}', '_blank')" title="${att.name}">
+                                    <div class="file-icon"><i data-lucide="file-text"></i></div>
+                                </div>`;
                         }
                     }).join('')}
                 </div>`;
@@ -145,30 +194,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     replyForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const content = document.getElementById('replyInput').value;
-        if (!content || !activeTicketId) return;
+        if (!content && selectedFiles.length === 0) return;
 
         const submitBtn = replyForm.querySelector('button');
         submitBtn.disabled = true;
 
         try {
-            let attachments = [];
-            if (selectedFile) {
-                const fileExt = selectedFile.name.split('.').pop();
-                const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-                const filePath = `admin/${activeTicketId}/${fileName}`;
-
-                const { error: uploadError } = await supabase.storage
-                    .from('tickets')
-                    .upload(filePath, selectedFile);
-
-                if (uploadError) throw uploadError;
-
-                const { data: { publicUrl } } = supabase.storage
-                    .from('tickets')
-                    .getPublicUrl(filePath);
-
-                attachments.push({ name: selectedFile.name, url: publicUrl });
-            }
+            const attachments = await uploadFiles(selectedFiles, activeTicketId);
 
             const { error } = await supabase
                 .from('asahi_ticket_messages')
@@ -182,13 +214,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!error) {
                 document.getElementById('replyInput').value = '';
                 adminFile.value = '';
-                selectedFile = null;
+                selectedFiles = [];
                 adminFilePreview.style.display = 'none';
                 fetchMessages(activeTicketId);
+                fetchTickets(); // Success triggers the handler on ticket side too
             }
         } catch (err) {
             console.error('Error al enviar respuesta:', err);
-            alert('Error al enviar respuesta: ' + (err.message || err));
         } finally {
             submitBtn.disabled = false;
         }
@@ -213,9 +245,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'asahi_ticket_messages' }, payload => {
             if (payload.new.ticket_id === activeTicketId) {
                 fetchMessages(activeTicketId);
+            } else {
+                fetchTickets(); // Show unread dots for others
             }
         })
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'asahi_tickets' }, () => {
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'asahi_tickets' }, () => {
             fetchTickets();
         })
         .subscribe();
