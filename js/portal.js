@@ -190,6 +190,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    window.viewImage = (url) => {
+        const modal = document.getElementById('lightboxModal');
+        const img = document.getElementById('lightboxImg');
+        img.src = url;
+        modal.style.display = 'flex';
+    };
+
     async function fetchMessages(ticketId) {
         const { data, error } = await supabase
             .from('asahi_ticket_messages')
@@ -206,15 +213,17 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Mensaje attachments:', msg.attachments);
             const attachmentsHtml = (msg.attachments || []).map(att => {
                 const isImage = att.type && att.type.startsWith('image/');
-                if (isImage) {
-                    return `
-                        <div class="attachment-item" onclick="window.open('${att.url}', '_blank')">
-                            <img src="${att.url}" alt="${att.name}">
-                        </div>`;
-                }
+                const previewContent = isImage 
+                    ? `<img src="${att.url}" alt="${att.name}">`
+                    : `<div class="file-icon" style="display:flex;align-items:center;justify-content:center;height:100%;"><i data-lucide="file-text"></i></div>`;
+                
                 return `
-                    <div class="attachment-item" onclick="window.open('${att.url}', '_blank')" title="${att.name}">
-                        <div class="file-icon"><i data-lucide="file-text"></i></div>
+                    <div class="attachment-item">
+                        ${previewContent}
+                        <div class="item-actions">
+                            ${isImage ? `<button class="action-btn" onclick="viewImage('${att.url}')" title="Ver"><i data-lucide="eye"></i></button>` : ''}
+                            <a href="${att.url}" target="_blank" download="${att.name}" class="action-btn" title="Descargar"><i data-lucide="download"></i></a>
+                        </div>
                     </div>`;
             }).join('');
 

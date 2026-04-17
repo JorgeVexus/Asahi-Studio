@@ -185,20 +185,26 @@
         /* Attachments Grid */
         .attachments-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 8px;
-            margin-top: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
         }
 
         .attachment-item {
-            width: 80px;
-            height: 80px;
-            border-radius: 6px;
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border);
             position: relative;
-            background: rgba(0,0,0,0.2);
+            background: var(--bg);
             cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .attachment-item:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
         }
 
         .attachment-item img {
@@ -207,12 +213,100 @@
             object-fit: cover;
         }
 
-        .attachment-item .file-icon {
+        .attachment-item .item-actions {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .attachment-item:hover .item-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        /* Lightbox modal */
+        #lightboxModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            color: var(--text-secondary);
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            padding: 2rem;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #lightboxModal img {
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close-lightbox {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 44px;
+            height: 44px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .close-lightbox:hover {
+            background: var(--accent);
+            color: var(--bg);
+            transform: rotate(90deg);
         }
 
         .form-group { display: flex; gap: 0.5rem; }
@@ -302,6 +396,12 @@
             </div>
         </div>
     </main>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" onclick="this.style.display='none'">
+        <button class="close-lightbox"><i data-lucide="x"></i></button>
+        <img id="lightboxImg" src="" alt="Vista previa" onclick="event.stopPropagation()">
+    </div>
 
     <script type="module" src="/js/admin-tickets.js"></script>
     <script>lucide.createIcons();</script>
