@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding | Asahi Studio</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --bg-secondary: #111;
+            --text: #f5f5f5;
+            --text-secondary: #b0b0b0;
+            --accent: #ff6b4a;
+            --accent-light: #ff8f75;
+            --border: #222;
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        main {
+            flex: 1;
+            max-width: 800px;
+            width: 90%;
+            margin: 0 auto 4rem;
+        }
+
+        .form-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            border-radius: var(--radius) var(--radius) 0 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 20%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .step-desc {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 100px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg);
+            border-color: var(--text-secondary);
+        }
+
+        /* Helper for Hex Colors input */
+        .color-hint {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            opacity: 0.7;
+        }
+
+        /* Final state */
+        .success-state {
+            text-align: center;
+            padding: 3rem 0;
+        }
+        
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 1.5rem;
+            }
+            .step-title {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" class="logo">
+            <div class="logo-mark">A</div>
+            <span>Asahi Studio</span>
+        </a>
+    </header>
+
+    <main id="app">
+        <div class="form-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <form id="onboardingForm">
+                <!-- Step 1: Fundamentos -->
+                <div class="step active" data-step="1">
+                    <h2 class="step-title">Fundamentos</h2>
+                    <p class="step-desc">Empecemos con la información básica para conocernos mejor.</p>
+                    
+                    <div class="form-group">
+                        <label for="full_name">Nombre y Apellido</label>
+                        <input type="text" id="full_name" name="full_name" placeholder="Ej. Juan Pérez">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company_name">Nombre de tu Empresa / Marca</label>
+                        <input type="text" id="company_name" name="company_name" placeholder="Ej. Asahi Studio">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email de contacto</label>
+                        <input type="email" id="email" name="email" placeholder="hola@tuempresa.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Número de WhatsApp</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+52 ...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="web_domain">Dominio Web (si ya tienes uno)</label>
+                        <input type="url" id="web_domain" name="web_domain" placeholder="https://tuweb.com">
+                    </div>
+                </div>
+
+                <!-- Step 2: Tu Negocio -->
+                <div class="step" data-step="2">
+                    <h2 class="step-title">Sobre tu Negocio</h2>
+                    <p class="step-desc">Ayúdanos a entender qué haces y a quién buscas llegar.</p>
+                    
+                    <div class="form-group">
+                        <label for="business_description">¿A qué se dedica tu empresa?</label>
+                        <textarea id="business_description" name="business_description" placeholder="Describe brevemente tus servicios o productos..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="competitor_advantage">¿Qué te hace mejor que tu competencia?</label>
+                        <textarea id="competitor_advantage" name="competitor_advantage" placeholder="Tus diferenciadores clave..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="target_audience">¿A qué tipo de clientes te diriges?</label>
+                        <textarea id="target_audience" name="target_audience" placeholder="Edad, género, profesión, intereses..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="website_goal">¿Cuál es el objetivo principal de tu sitio web?</label>
+                        <select id="website_goal" name="website_goal">
+                            <option value="">Selecciona una opción</option>
+                            <option value="leads">Generar prospectos (Leads)</option>
+                            <option value="sales">Vender productos directamente</option>
+                            <option value="brand">Posicionamiento de marca</option>
+                            <option value="info">Informar sobre servicios</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 3: Identidad y Diseño -->
+                <div class="step" data-step="3">
+                    <h2 class="step-title">Identidad y Diseño</h2>
+                    <p class="step-desc">Define el estilo visual de tu futura presencia web.</p>
+                    
+                    <div class="form-group">
+                        <label for="design_references">Referencias de diseño</label>
+                        <textarea id="design_references" name="design_references" placeholder="URLs de sitios que te gusten y qué es lo que más te atrae de ellos..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="has_brand_identity">¿Ya tienes identidad de marca? (Logo, colores, etc.)</label>
+                        <select id="has_brand_identity" name="has_brand_identity">
+                            <option value="yes">Sí, ya la tengo</option>
+                            <option value="no">No, necesito ayuda</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="brand_files_link">Enlace a tus archivos de marca (Drive/Dropbox)</label>
+                        <input type="url" id="brand_files_link" name="brand_files_link" placeholder="Adjunta logo, tipografías y guías aquí...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="brand_update_preference">¿Deseas mantener tu branding actual o actualizarlo?</label>
+                        <select id="brand_update_preference" name="brand_update_preference">
+                            <option value="keep">Mantener actual</option>
+                            <option value="update">Prefiero una actualización</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="brand_adjectives">3 Adjetivos que definan cómo quieres ser percibido</label>
+                        <input type="text" id="brand_adjectives" name="brand_adjectives" placeholder="Ej. Innovador, Cercano, Premium">
+                    </div>
+                </div>
+
+                <!-- Step 4: Estructura y Contenido -->
+                <div class="step" data-step="4">
+                    <h2 class="step-title">Contenido y Estructura</h2>
+                    <p class="step-desc">Planifiquemos las secciones y funcionalidades del sitio.</p>
+                    
+                    <div class="form-group">
+                        <label for="desired_pages">¿Qué páginas te gustaría incluir?</label>
+                        <textarea id="desired_pages" name="desired_pages" placeholder="Ej. Inicio, Servicios, Portfolio, Contacto..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="desired_functionality">Funcionalidades especiales</label>
+                        <textarea id="desired_functionality" name="desired_functionality" placeholder="Reserva de citas, chat, blog, área de clientes..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="copywriting_preference">Contenido (Textos)</label>
+                        <select id="copywriting_preference" name="copywriting_preference">
+                            <option value="client">Yo proporcionaré los textos</option>
+                            <option value="asahi">Deseo que Asahi Studio los escriba</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="copy_doc_link">Enlace a documento de textos (si ya los tienes)</label>
+                        <input type="url" id="copy_doc_link" name="copy_doc_link" placeholder="Google Docs, PDF, etc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="photos_drive_link">Fotos específicas del negocio (Enlace a Drive)</label>
+                        <input type="url" id="photos_drive_link" name="photos_drive_link" placeholder="Asegúrate que sea público para nosotros">
+                    </div>
+                </div>
+
+                <!-- Step 5: Finalización -->
+                <div class="step" data-step="5">
+                    <h2 class="step-title">Detalles Finales</h2>
+                    <p class="step-desc">Configuración técnica y redes sociales.</p>
+                    
+                    <div class="form-group">
+                        <label for="hex_colors">Colores HEX preferidos</label>
+                        <p class="color-hint">Ej. Azul #007bff, Blanco #ffffff</p>
+                        <input type="text" id="hex_colors" name="hex_colors" placeholder="#...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="social_links">Enlaces a Redes Sociales</label>
+                        <textarea id="social_links" name="social_links" placeholder="Facebook, Instagram, LinkedIn, TikTok..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="form_recipient_email">¿A qué correo deseas recibir avisos del sitio?</label>
+                        <input type="email" id="form_recipient_email" name="form_recipient_email" placeholder="ventas@tuempresa.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additional_notes">¿Alguna otra observación?</label>
+                        <textarea id="additional_notes" name="additional_notes" placeholder="Cualquier detalle extra es bienvenido..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-nav">
+                    <button type="button" class="btn btn-secondary" id="prevBtn" style="visibility: hidden;">Anterior</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">Siguiente <i data-lucide="chevron-right"></i></button>
+                </div>
+            </form>
+
+            <div id="successState" class="success-state" style="display: none;">
+                <div class="success-icon"><i data-lucide="check" size="32"></i></div>
+                <h2 class="step-title">¡Todo listo!</h2>
+                <p class="step-desc">Hemos recibido tu información de onboarding para Asahi Studio. En un plazo de 24-48 horas nos pondremos en contacto para comenzar con tu proyecto.</p>
+                <a href="/" class="btn btn-secondary">Volver al inicio</a>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="/js/onboarding.js"></script>
+    <script>
+        // Init icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
