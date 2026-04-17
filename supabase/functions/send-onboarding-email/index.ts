@@ -27,7 +27,7 @@ serve(async (req) => {
         'Authorization': `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'Asahi Studio <onboarding@asahi.studio>', // Asegúrate de verificar este dominio en Resend
+        from: 'Asahi Studio <onboarding@asahistudio.lat>', // Dominio verificado correctamente
         to: [record.email],
         subject: '¡Hemos recibido tu información! - Asahi Studio',
         html: `
@@ -50,7 +50,7 @@ serve(async (req) => {
         'Authorization': `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'Asahi System <system@asahi.studio>',
+        from: 'Asahi System <system@asahistudio.lat>',
         to: [ADMIN_EMAIL],
         subject: `🚀 Nuevo Onboarding: ${record.company_name}`,
         html: `
@@ -61,7 +61,7 @@ serve(async (req) => {
             <p><strong>Email:</strong> ${record.email}</p>
             <p><strong>Teléfono:</strong> ${record.phone}</p>
             <br>
-            <a href="https://asahi.studio/dashboard" style="background: #ff6b4a; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Ver detalles en el Dashboard</a>
+            <a href="https://asahistudio.lat/dashboard" style="background: #ff6b4a; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Ver detalles en el Dashboard</a>
           </div>
         `,
       }),
