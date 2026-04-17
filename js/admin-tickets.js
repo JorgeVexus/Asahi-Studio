@@ -149,6 +149,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         modal.style.display = 'flex';
     };
 
+    window.downloadFile = async (url, filename) => {
+        try {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = filename || 'archivo_asahi';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(blobUrl);
+            document.body.removeChild(a);
+        } catch (err) {
+            console.error('Error Admin download:', err);
+            window.open(url, '_blank');
+        }
+    };
+
     async function fetchMessages(ticketId) {
         const { data, error } = await supabase
             .from('asahi_ticket_messages')
@@ -177,7 +195,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 ${previewContent}
                                 <div class="item-actions">
                                     ${isImage ? `<button class="action-btn" onclick="viewImage('${att.url}')" title="Ver"><i data-lucide="eye"></i></button>` : ''}
-                                    <a href="${att.url}" target="_blank" download="${att.name}" class="action-btn" title="Descargar"><i data-lucide="download"></i></a>
+                                    <button class="action-btn" onclick="downloadFile('${att.url}', '${att.name}')" title="Descargar"><i data-lucide="download"></i></button>
                                 </div>
                             </div>`;
                     }).join('')}

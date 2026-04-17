@@ -34,6 +34,32 @@
             min-height: 100vh;
         }
 
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #222;
+            border-radius: 10px;
+            border: 2px solid #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* Support for Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #222 #0a0a0a;
+        }
+
         /* Access View */
         #accessView {
             display: flex;
