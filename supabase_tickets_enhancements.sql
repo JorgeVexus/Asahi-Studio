@@ -36,6 +36,19 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('tickets', 'tickets', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Políticas de Storage para el bucket 'tickets'
+CREATE POLICY "Acceso público lectura tickets"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'tickets');
+
+CREATE POLICY "Subida libre para tickets"
+ON storage.objects FOR INSERT
+WITH CHECK (bucket_id = 'tickets');
+
 -- 3. Trigger que se dispara al insertar un mensaje
 DROP TRIGGER IF EXISTS on_ticket_message_inserted ON asahi_ticket_messages;
 CREATE TRIGGER on_ticket_message_inserted

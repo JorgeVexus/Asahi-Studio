@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function uploadFiles(files, ticketId) {
         if (!files || files.length === 0) return [];
+        console.log('Admin subiendo archivos:', files.length);
         
         const uploadPromises = Array.from(files).map(async (file) => {
             const fileExt = file.name.split('.').pop();
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .upload(filePath, file);
 
             if (uploadError) {
-                console.error('Error uploading:', uploadError);
+                console.error('Error Admin upload:', uploadError);
                 return null;
             }
 
@@ -55,11 +56,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .from('tickets')
                 .getPublicUrl(filePath);
 
-            return { url: publicUrl, name: file.name, type: file.type };
+            console.log('Admin subida exitosa:', publicUrl);
+            return { url: publicUrl, name: file.name, type: file.type || 'application/octet-stream' };
         });
 
         const results = await Promise.all(uploadPromises);
-        return results.filter(res => res !== null);
+        const validResults = results.filter(res => res !== null);
+        console.log('Admin total éxito:', validResults.length);
+        return validResults;
     }
 
     // --- Init ---
@@ -121,12 +125,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Mark as read for admin
         if (ticket.unread_admin) {
             await supabase.from('asahi_tickets').update({ unread_admin: false }).eq('id', ticket.id);
-            // We don't call fetchTickets yet to avoid flickering, but we can updated locally
-            ticket.unread_admin = false;
-            // Refresh sidebar to remove dot
-            renderSidebar(Array.from(document.querySelectorAll('.sidebar-item')).map(el => {
-                // This is a bit hacky, better just re-fetch or find in local state if we had one
-            }));
             fetchTickets(); 
         }
 
@@ -153,8 +151,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (error) return;
 
+        console.log('Admin mensajes cargados:', data.length);
+
         const chatMessages = document.getElementById('chatMessages');
         chatMessages.innerHTML = data.map(msg => {
+            console.log('Admin msg attachments:', msg.attachments);
             let attachmentsHtml = '';
             if (msg.attachments && msg.attachments.length > 0) {
                 attachmentsHtml = `<div class="attachments-grid">

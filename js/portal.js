@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function uploadFiles(files) {
         if (!files || files.length === 0) return [];
+        console.log('Subiendo archivos:', files.length);
         
         const uploadPromises = Array.from(files).map(async (file) => {
             const fileExt = file.name.split('.').pop();
@@ -102,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .upload(filePath, file);
 
             if (uploadError) {
-                console.error('Error uploading:', uploadError);
+                console.error('Error al subir archivo:', file.name, uploadError);
                 return null;
             }
 
@@ -110,11 +111,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 .from('tickets')
                 .getPublicUrl(filePath);
 
-            return { url: publicUrl, name: file.name, type: file.type };
+            console.log('Archivo subido con éxito:', publicUrl);
+            return { url: publicUrl, name: file.name, type: file.type || 'application/octet-stream' };
         });
 
         const results = await Promise.all(uploadPromises);
-        return results.filter(res => res !== null);
+        const validResults = results.filter(res => res !== null);
+        console.log('Total archivos subidos con éxito:', validResults.length);
+        return validResults;
     }
 
     newTicketForm.addEventListener('submit', async (e) => {
@@ -132,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // 1. Upload files if exist
             const attachments = await uploadFiles(fileInput.files);
+            console.log('Adjuntos a guardar:', attachments);
 
             // 2. Create Ticket
             const { data: ticket, error: tError } = await supabase
@@ -178,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     chatFile.addEventListener('change', () => {
         if (chatFile.files[0]) {
-            filePreview.textContent = `Archivo: ${chatFile.files[0].name}`;
+            filePreview.textContent = `Archivo(s): ${chatFile.files.length}`;
             filePreview.style.display = 'block';
         } else {
             filePreview.style.display = 'none';
@@ -194,10 +199,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (error) return;
 
+        console.log('Mensajes cargados:', data.length);
+
         const chatMessages = document.getElementById('chatMessages');
         chatMessages.innerHTML = data.map(msg => {
+            console.log('Mensaje attachments:', msg.attachments);
             const attachmentsHtml = (msg.attachments || []).map(att => {
-                if (att.type && att.type.startsWith('image/')) {
+                const isImage = att.type && att.type.startsWith('image/');
+                if (isImage) {
                     return `
                         <div class="attachment-item" onclick="window.open('${att.url}', '_blank')">
                             <img src="${att.url}" alt="${att.name}">
@@ -218,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('');
         chatMessages.scrollTop = chatMessages.scrollHeight;
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
     }
 
     chatForm.addEventListener('submit', async (e) => {
