@@ -19,20 +19,22 @@ serve(async (req) => {
   }
 
   try {
-    console.log('--- Nueva notificación de Webhook recibida ---');
+    const payload = await req.json()
+    
+    // DIAGNÓSTICO MAESTRO: Imprimir todo el cuerpo recibido
+    console.log('--- INICIO DE NOTIFICACIÓN ---');
+    console.log('Payload completo:', JSON.stringify(payload, null, 2));
     
     if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY no configurada');
 
-    const payload = await req.json()
     const { record, table, type } = payload
-    
-    console.log(`Evento: ${type} | Tabla: ${table} | Sender: ${record?.sender_type || 'N/A'}`);
-
     const SENDER_EMAIL = 'Asahi Studio <onboarding@asahistudio.lat>';
 
     // CASE 1: NUEVO TICKET (Tabla asahi_tickets)
+    // Este evento ocurre cuando alguien rellena el formulario de "Nuevo Ticket"
     if (table === 'asahi_tickets' && type === 'INSERT') {
-      console.log('Procesando NUEVO TICKET (Admin Notification)...');
+      console.log('>>> EJECUTANDO: Notificación de TICKET NUEVO para Jorge');
+      
       const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -42,28 +44,31 @@ serve(async (req) => {
         body: JSON.stringify({
           from: SENDER_EMAIL,
           to: [ADMIN_EMAIL],
-          subject: `🎫 [NUEVO TICKET] ${record.subject}`,
+          subject: `🚀 [NUEVO PROYECTO] ${record.subject}`,
           html: `
-            <div style="font-family: sans-serif; padding: 20px;">
-              <h2 style="color: #ff6b4a;">Nuevo Ticket Recibido</h2>
+            <div style="font-family: sans-serif; padding: 20px; border: 2px solid #ff6b4a; border-radius: 10px;">
+              <h1 style="color: #ff6b4a; margin-top: 0;">🎫 ¡Tienes un nuevo Ticket!</h1>
+              <p style="font-size: 16px;">Se ha registrado un nuevo requerimiento en el sistema.</p>
+              <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
               <p><strong>Cliente:</strong> ${record.client_email}</p>
               <p><strong>Asunto:</strong> ${record.subject}</p>
-              <p><strong>Prioridad:</strong> ${record.priority}</p>
+              <p><strong>Prioridad:</strong> <span style="background: #333; color: white; padding: 2px 8px; border-radius: 4px;">${record.priority}</span></p>
               <br>
-              <a href="https://asahistudio.lat/dashboard/tickets.html" style="background: #ff6b4a; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Gestionar en el Panel</a>
+              <a href="https://asahistudio.lat/dashboard/tickets.html" style="display: inline-block; background: #ff6b4a; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">GESTIONAR TICKET AHORA</a>
             </div>
           `,
         }),
       })
-      console.log('Resend status (Nuevo Ticket):', res.status);
+      console.log('Resultado envío Ticket Nuevo:', res.status);
     }
 
     // CASE 2: NUEVO MENSAJE (Tabla asahi_ticket_messages)
     if (table === 'asahi_ticket_messages' && type === 'INSERT') {
       
-      // A. Si el mensaje es del CLIENTE -> Avisar al ADMIN
+      // A. El CLIENTE escribe (Notificar a Jorge)
       if (record.sender_type === 'client') {
-        console.log('Procesando MENSAJE DE CLIENTE (Admin Notification)...');
+        console.log('>>> EJECUTANDO: Notificación de MENSAJE DE CLIENTE para Jorge');
+        
         const res = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
@@ -73,28 +78,29 @@ serve(async (req) => {
           body: JSON.stringify({
             from: SENDER_EMAIL,
             to: [ADMIN_EMAIL],
-            subject: `💬 [TICKET UPDATE] Nuevo mensaje del cliente`,
+            subject: `💬 [NUEVO MENSAJE] Chat del Ticket`,
             html: `
               <div style="font-family: sans-serif; padding: 20px;">
-                <h2 style="color: #ff6b4a;">Nuevo mensaje recibido</h2>
-                <p>Un cliente ha respondido en un ticket.</p>
-                <p style="background: #f4f4f4; padding: 15px; border-radius: 5px; font-style: italic;">
+                <h2 style="color: #333;">Actualización en el chat</h2>
+                <p>Novedad de un cliente:</p>
+                <div style="background: #f9f9f9; border-left: 4px solid #ff6b4a; padding: 15px; font-style: italic; color: #555;">
                   "${record.content}"
-                </p>
+                </div>
                 <br>
-                <a href="https://asahistudio.lat/dashboard/tickets.html" style="background: #333; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Ir a responder</a>
+                <a href="https://asahistudio.lat/dashboard/tickets.html" style="display: inline-block; background: #333; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Responder en el Panel</a>
               </div>
             `,
           }),
         })
-        console.log('Resend status (Mensaje Cliente):', res.status);
+        console.log('Resultado envío Mensaje Cliente:', res.status);
       }
 
-      // B. Si el mensaje es del ADMIN -> Avisar al CLIENTE
+      // B. Jorge escribe (Notificar al Cliente)
       if (record.sender_type === 'admin') {
-        console.log('Procesando RESPUESTA DE ADMIN (Client Notification)...');
+        console.log('>>> EJECUTANDO: Notificación de RESPUESTA ADMIN para el Cliente');
         
-        // Obtener info del ticket para saber el correo del cliente
+        if (!SUPABASE_URL) throw new Error('Falta SUPABASE_URL para buscar el email del cliente');
+
         const ticketResponse = await fetch(`${SUPABASE_URL}/rest/v1/asahi_tickets?id=eq.${record.ticket_id}&select=*`, {
           headers: {
             'apikey': SUPABASE_ANON_KEY || '',
@@ -114,34 +120,35 @@ serve(async (req) => {
             body: JSON.stringify({
               from: SENDER_EMAIL,
               to: [ticket.client_email],
-              subject: `💬 Jorge ha respondido a tu ticket: ${ticket.subject}`,
+              subject: `✨ Respuesta de Asahi Studio: ${ticket.subject}`,
               html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
                   <div style="background: #ff6b4a; padding: 20px; text-align: center;">
                     <h1 style="color: white; margin: 0;">Asahi Studio</h1>
                   </div>
                   <div style="padding: 30px;">
-                    <h2 style="color: #333;">Hola, tienes una actualización</h2>
+                    <h2 style="color: #333;">Hola, tienes una respuesta de Jorge</h2>
                     <p style="color: #666; font-size: 16px; line-height: 1.6;">${record.content}</p>
                     <br>
-                    <a href="https://asahistudio.lat/portal" style="display: inline-block; background: #333; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Ver en el Portal</a>
+                    <a href="https://asahistudio.lat/portal" style="display: inline-block; background: #333; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Ir al Portal del Cliente</a>
                   </div>
                 </div>
               `,
             }),
           })
-          console.log('Resend status (Respuesta Admin):', res.status);
+          console.log('Resultado envío Respuesta Admin:', res.status);
         }
       }
     }
 
-    return new Response(JSON.stringify({ message: 'OK' }), { 
+    console.log('--- FIN DE NOTIFICACIÓN (OK) ---');
+    return new Response(JSON.stringify({ status: 'ok' }), { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
       status: 200 
     })
 
   } catch (error) {
-    console.error('ERROR EDGE FUNCTION:', error.message);
+    console.error('!!! ERROR EN LA FUNCIÓN:', error.message);
     return new Response(JSON.stringify({ error: error.message }), { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
       status: 400 
