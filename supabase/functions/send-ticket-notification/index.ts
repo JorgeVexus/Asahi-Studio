@@ -19,18 +19,33 @@ serve(async (req) => {
   }
 
   try {
-    const { record, table, type } = await req.json()
+    // Logging inicial para depuración
+    console.log('--- Nueva notificación de Webhook recibida ---');
+    
+    if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY no configurada');
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      console.warn('Advertencia: SUPABASE_URL o SUPABASE_ANON_KEY no están configuradas. Las respuestas de admin podrían fallar.');
+    }
 
-    // 1. Caso: NUEVO TICKET
+    const payload = await req.json()
+    const { record, table, type } = payload
+    
+    console.log(`Evento detectado: ${type} en tabla ${table}`);
+
+    // Usamos el remitente que sabemos que funciona en onboarding para descartar bloqueos de dominio
+    const SENDER_EMAIL = 'Asahi Studio <onboarding@asahistudio.lat>';
+
+    // 1. Caso: NUEVO TICKET (Notificar al Admin)
     if (table === 'asahi_tickets' && type === 'INSERT') {
-      await fetch('https://api.resend.com/emails', {
+      console.log('Procesando NUEVO TICKET...');
+      const resendResponse = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          from: 'Asahi System <tickets@asahistudio.lat>',
+          from: 'Asahi System <onboarding@asahistudio.lat>',
           to: [ADMIN_EMAIL],
           subject: `🎫 Nuevo Ticket: ${record.subject}`,
           html: `
@@ -45,18 +60,24 @@ serve(async (req) => {
           `,
         }),
       })
+      
+      const resendData = await resendResponse.json();
+      console.log('Respuesta de Resend (Nuevo Ticket):', resendData);
     }
 
-    // 2. Caso: NUEVA RESPUESTA O COMPLETADO
+    // 2. Caso: NUEVA RESPUESTA O COMPLETADO (Notificar al Cliente)
     if (table === 'asahi_ticket_messages' && type === 'INSERT' && record.sender_type === 'admin') {
-      // Necesitamos el email del cliente y el asunto del ticket. 
-      // Los obtenemos de Supabase usando el ticket_id
+      console.log('Procesando RESPUESTA DE ADMIN...');
+      
+      if (!SUPABASE_URL) throw new Error('SUPABASE_URL es necesaria para obtener info del ticket');
+
       const ticketResponse = await fetch(`${SUPABASE_URL}/rest/v1/asahi_tickets?id=eq.${record.ticket_id}&select=*`, {
         headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          'apikey': SUPABASE_ANON_KEY || '',
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY || ''}`
         }
       })
+      
       const tickets = await ticketResponse.json()
       const ticket = tickets[0]
 
@@ -65,20 +86,19 @@ serve(async (req) => {
         let title = "Jorge ha respondido a tu ticket"
         let messageBody = record.content
 
-        // Si el ticket acaba de ser completado (esto lo detectamos por el estado del ticket)
         if (ticket.status === 'completado') {
           subject = `✅ Ticket Completado: ${ticket.subject}`
           title = "¡Tu requerimiento ha sido completado!"
         }
 
-        await fetch('https://api.resend.com/emails', {
+        const resendResponse = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: 'Asahi Studio <soporte@asahistudio.lat>',
+            from: SENDER_EMAIL,
             to: [ticket.client_email],
             subject: subject,
             html: `
@@ -99,6 +119,11 @@ serve(async (req) => {
             `,
           }),
         })
+        
+        const resendData = await resendResponse.json();
+        console.log('Respuesta de Resend (Notificación Cliente):', resendData);
+      } else {
+        console.error('No se encontró el ticket asociado al mensaje:', record.ticket_id);
       }
     }
 
@@ -108,6 +133,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
+    console.error('Error crítico en Edge Function:', error.message);
     return new Response(
       JSON.stringify({ error: error.message }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
