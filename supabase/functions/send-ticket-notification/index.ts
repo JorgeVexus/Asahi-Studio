@@ -19,35 +19,30 @@ serve(async (req) => {
   }
 
   try {
-    // Logging inicial para depuración
     console.log('--- Nueva notificación de Webhook recibida ---');
     
     if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY no configurada');
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      console.warn('Advertencia: SUPABASE_URL o SUPABASE_ANON_KEY no están configuradas. Las respuestas de admin podrían fallar.');
-    }
 
     const payload = await req.json()
     const { record, table, type } = payload
     
-    console.log(`Evento detectado: ${type} en tabla ${table}`);
+    console.log(`Evento: ${type} | Tabla: ${table} | Sender: ${record?.sender_type || 'N/A'}`);
 
-    // Usamos el remitente que sabemos que funciona en onboarding para descartar bloqueos de dominio
     const SENDER_EMAIL = 'Asahi Studio <onboarding@asahistudio.lat>';
 
-    // 1. Caso: NUEVO TICKET (Notificar al Admin)
+    // CASE 1: NUEVO TICKET (Tabla asahi_tickets)
     if (table === 'asahi_tickets' && type === 'INSERT') {
-      console.log('Procesando NUEVO TICKET...');
-      const resendResponse = await fetch('https://api.resend.com/emails', {
+      console.log('Procesando NUEVO TICKET (Admin Notification)...');
+      const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          from: 'Asahi System <onboarding@asahistudio.lat>',
+          from: SENDER_EMAIL,
           to: [ADMIN_EMAIL],
-          subject: `🎫 Nuevo Ticket: ${record.subject}`,
+          subject: `🎫 [NUEVO TICKET] ${record.subject}`,
           html: `
             <div style="font-family: sans-serif; padding: 20px;">
               <h2 style="color: #ff6b4a;">Nuevo Ticket Recibido</h2>
@@ -55,43 +50,21 @@ serve(async (req) => {
               <p><strong>Asunto:</strong> ${record.subject}</p>
               <p><strong>Prioridad:</strong> ${record.priority}</p>
               <br>
-              <a href="https://asahistudio.lat/dashboard/tickets.html" style="background: #ff6b4a; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Ir al Panel de Tickets</a>
+              <a href="https://asahistudio.lat/dashboard/tickets.html" style="background: #ff6b4a; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Gestionar en el Panel</a>
             </div>
           `,
         }),
       })
-      
-      const resendData = await resendResponse.json();
-      console.log('Respuesta de Resend (Nuevo Ticket):', resendData);
+      console.log('Resend status (Nuevo Ticket):', res.status);
     }
 
-    // 2. Caso: NUEVA RESPUESTA O COMPLETADO (Notificar al Cliente)
-    if (table === 'asahi_ticket_messages' && type === 'INSERT' && record.sender_type === 'admin') {
-      console.log('Procesando RESPUESTA DE ADMIN...');
+    // CASE 2: NUEVO MENSAJE (Tabla asahi_ticket_messages)
+    if (table === 'asahi_ticket_messages' && type === 'INSERT') {
       
-      if (!SUPABASE_URL) throw new Error('SUPABASE_URL es necesaria para obtener info del ticket');
-
-      const ticketResponse = await fetch(`${SUPABASE_URL}/rest/v1/asahi_tickets?id=eq.${record.ticket_id}&select=*`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY || '',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY || ''}`
-        }
-      })
-      
-      const tickets = await ticketResponse.json()
-      const ticket = tickets[0]
-
-      if (ticket) {
-        let subject = `💬 Nueva respuesta en tu ticket: ${ticket.subject}`
-        let title = "Jorge ha respondido a tu ticket"
-        let messageBody = record.content
-
-        if (ticket.status === 'completado') {
-          subject = `✅ Ticket Completado: ${ticket.subject}`
-          title = "¡Tu requerimiento ha sido completado!"
-        }
-
-        const resendResponse = await fetch('https://api.resend.com/emails', {
+      // A. Si el mensaje es del CLIENTE -> Avisar al ADMIN
+      if (record.sender_type === 'client') {
+        console.log('Procesando MENSAJE DE CLIENTE (Admin Notification)...');
+        const res = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -99,44 +72,79 @@ serve(async (req) => {
           },
           body: JSON.stringify({
             from: SENDER_EMAIL,
-            to: [ticket.client_email],
-            subject: subject,
+            to: [ADMIN_EMAIL],
+            subject: `💬 [TICKET UPDATE] Nuevo mensaje del cliente`,
             html: `
-              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
-                <div style="background: #ff6b4a; padding: 20px; text-align: center;">
-                  <h1 style="color: white; margin: 0;">Asahi Studio</h1>
-                </div>
-                <div style="padding: 30px;">
-                  <h2 style="color: #333;">${title}</h2>
-                  <p style="color: #666; font-size: 16px; line-height: 1.6;">${messageBody}</p>
-                  <br>
-                  <a href="https://asahistudio.lat/portal" style="display: inline-block; background: #333; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Ver en el Portal</a>
-                </div>
-                <div style="background: #f9f9f9; padding: 20px; text-align: center; color: #999; font-size: 12px;">
-                  <p>Este es un correo automático del sistema de tickets de Asahi Studio.</p>
-                </div>
+              <div style="font-family: sans-serif; padding: 20px;">
+                <h2 style="color: #ff6b4a;">Nuevo mensaje recibido</h2>
+                <p>Un cliente ha respondido en un ticket.</p>
+                <p style="background: #f4f4f4; padding: 15px; border-radius: 5px; font-style: italic;">
+                  "${record.content}"
+                </p>
+                <br>
+                <a href="https://asahistudio.lat/dashboard/tickets.html" style="background: #333; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Ir a responder</a>
               </div>
             `,
           }),
         })
+        console.log('Resend status (Mensaje Cliente):', res.status);
+      }
+
+      // B. Si el mensaje es del ADMIN -> Avisar al CLIENTE
+      if (record.sender_type === 'admin') {
+        console.log('Procesando RESPUESTA DE ADMIN (Client Notification)...');
         
-        const resendData = await resendResponse.json();
-        console.log('Respuesta de Resend (Notificación Cliente):', resendData);
-      } else {
-        console.error('No se encontró el ticket asociado al mensaje:', record.ticket_id);
+        // Obtener info del ticket para saber el correo del cliente
+        const ticketResponse = await fetch(`${SUPABASE_URL}/rest/v1/asahi_tickets?id=eq.${record.ticket_id}&select=*`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY || '',
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY || ''}`
+          }
+        })
+        const tickets = await ticketResponse.json()
+        const ticket = tickets[0]
+
+        if (ticket) {
+          const res = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${RESEND_API_KEY}`,
+            },
+            body: JSON.stringify({
+              from: SENDER_EMAIL,
+              to: [ticket.client_email],
+              subject: `💬 Jorge ha respondido a tu ticket: ${ticket.subject}`,
+              html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
+                  <div style="background: #ff6b4a; padding: 20px; text-align: center;">
+                    <h1 style="color: white; margin: 0;">Asahi Studio</h1>
+                  </div>
+                  <div style="padding: 30px;">
+                    <h2 style="color: #333;">Hola, tienes una actualización</h2>
+                    <p style="color: #666; font-size: 16px; line-height: 1.6;">${record.content}</p>
+                    <br>
+                    <a href="https://asahistudio.lat/portal" style="display: inline-block; background: #333; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Ver en el Portal</a>
+                  </div>
+                </div>
+              `,
+            }),
+          })
+          console.log('Resend status (Respuesta Admin):', res.status);
+        }
       }
     }
 
-    return new Response(
-      JSON.stringify({ message: 'Notification processed' }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-    )
+    return new Response(JSON.stringify({ message: 'OK' }), { 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
+      status: 200 
+    })
 
   } catch (error) {
-    console.error('Error crítico en Edge Function:', error.message);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-    )
+    console.error('ERROR EDGE FUNCTION:', error.message);
+    return new Response(JSON.stringify({ error: error.message }), { 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
+      status: 400 
+    })
   }
 })
