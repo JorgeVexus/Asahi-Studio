@@ -14,14 +14,12 @@ const schema = z.object({
   message: z.string().trim().min(10, "Cuéntanos un poco más").max(1000),
 });
 
-import { useForm as useFormspree } from "@formspree/react";
 type FormData = z.infer<typeof schema>;
 
 const budgets = ["< $200 USD", "$200 – $500 USD", "$500 – $1,000 USD", "$1,000+ USD"];
 const services = ["Landing Express", "Growth (Landing + A/B)", "Pro (SaaS/App)", "Automatización / IA"];
 
 export function ContactForm() {
-  const [formspreeState, sendToFormspree] = useFormspree("meenpgbp");
   const [sent, setSent] = useState(false);
   const { register, handleSubmit, formState: { errors, isSubmitting }, watch, setValue, reset } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -32,12 +30,26 @@ export function ContactForm() {
   const service = watch("service");
 
   const onSubmit = async (data: FormData) => {
-    await sendToFormspree(data);
-    console.log("Lead:", { ...data, email: "[redacted]" });
-    toast.success("¡Recibido! Te contactamos en menos de 24h.");
-    setSent(true);
-    reset();
-    setTimeout(() => setSent(false), 4000);
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      console.log("Lead:", { ...data, email: "[redacted]" });
+      toast.success("¡Recibido! Te contactamos en menos de 24h.");
+      setSent(true);
+      reset();
+      setTimeout(() => setSent(false), 4000);
+    } catch (error) {
+      toast.error("Hubo un problema al enviar el mensaje. Por favor intenta de nuevo.");
+      console.error(error);
+    }
   };
 
   return (
