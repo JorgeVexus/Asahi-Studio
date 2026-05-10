@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
+import { Preloader } from "../components/asahi/Preloader";
 
 function NotFoundComponent() {
   return (
@@ -48,6 +49,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <HeadContent />
+      <Preloader />
       {children}
       <Scripts />
     </>
