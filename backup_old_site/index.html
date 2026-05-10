@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Asahi Studio | High-End Digital Engineering</title>
+    <meta name="description" content="We engineer premium digital systems, immersive web experiences, and scalable infrastructures for forward-thinking brands.">
+    
+    <!-- AEO / SEO Schema for AI Engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Asahi Studio",
+      "url": "https://asahistudio.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://asahistudio.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Qué tecnologías utilizan para el desarrollo web?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Especializamos en arquitecturas modernas y escalables utilizando Next.js, React, y Webflow para el frontend, complementado con infraestructuras robustas en Supabase o custom backend según los requerimientos del sistema."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo optimizan el diseño UX/UI para aumentar la conversión?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Implementamos 'Conversion-Led Architecture'. Analizamos datos de comportamiento, reducimos la fricción cognitiva, y diseñamos flujos de usuario intuitivos con microinteracciones que guían al usuario hacia los objetivos de negocio."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Ofrecen soporte y mantenimiento post-lanzamiento?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, operamos bajo el modelo de 'Continuous Evolution'. Ofrecemos planes mensuales de ingeniería que cubren monitoreo de seguridad, actualizaciones de performance, y desarrollo iterativo de nuevas funcionalidades."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <link rel="stylesheet" href="css/premium.css">
+    
+    <!-- GSAP & Core Libs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/SplitText.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
+</head>
+<body data-theme="dark">
+    
+    <!-- System Environment -->
+    <div class="noise-overlay"></div>
+    <div class="system-grid"></div>
+    
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+    <div class="system-crosshair v-crosshair"></div>
+    <div class="system-crosshair h-crosshair"></div>
+
+    <!-- UI Overlay -->
+    <header class="sys-header">
+        <div class="brand">
+            <span class="sys-tag">[SYS.ID]</span>
+            <div class="logo-text">ASAHI STUDIO</div>
+        </div>
+        <div class="sys-status">
+            <div class="status-dot"></div>
+            <span>ALL SYSTEMS NOMINAL</span>
+        </div>
+        <div class="sys-time" id="global-clock">00:00:00:00</div>
+    </header>
+
+    <div class="scroll-progress">
+        <div class="scroll-progress-bar"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="smooth-wrapper">
+        <div id="smooth-content">
+
+            <!-- 01. SYSTEM BOOT (HERO) -->
+            <section id="hero" class="section-hero">
+                <div class="container hero-container">
+                    <div class="hero-content">
+                        <div class="data-block" data-animate="fade-up">
+                            <span class="sys-tag">/ 01 — INITIALIZATION</span>
+                        </div>
+                        <h1 class="display-huge split-text">
+                            PRECISION <br>
+                            <span class="text-accent">ENGINEERED.</span>
+                        </h1>
+                        <div class="hero-bottom-grid">
+                            <p class="hero-lead" data-animate="fade-up">
+                                We architect high-end digital ecosystems. Merging uncompromised editorial design with scalable technical infrastructure to command market authority.
+                            </p>
+                            <div class="hero-actions" data-animate="fade-up">
+                                <a href="#contact" class="btn-primary magnetic-btn">
+                                    <span class="btn-text">INITIALIZE PROJECT</span>
+                                    <span class="btn-icon">↗</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 02. THE HOOK (MANIFESTO) -->
+            <section id="manifesto" class="section-manifesto">
+                <div class="container">
+                    <div class="manifesto-grid">
+                        <div class="manifesto-visual">
+                            <div class="abstract-shape"></div>
+                        </div>
+                        <div class="manifesto-text">
+                            <span class="sys-tag">/ 02 — THE DIRECTIVE</span>
+                            <h2 class="display-large split-text-scroll">
+                                AVERAGE <br>IS A <br>LIABILITY.
+                            </h2>
+                            <p class="body-large reveal-fade">
+                                In a saturated digital landscape, templates and generic solutions erode brand equity. We build bespoke, conversion-optimized engines that separate category leaders from the noise.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 03. HORIZONTAL OUTPUT (PROJECTS) -->
+            <section id="output" class="section-output">
+                <div class="output-header container">
+                    <span class="sys-tag">/ 03 — DEPLOYED SYSTEMS</span>
+                    <h2 class="display-medium">PROVEN ARCHITECTURES</h2>
+                </div>
+                
+                <div class="horizontal-scroll-wrapper">
+                    <div class="horizontal-scroll-container">
+                        
+                        <!-- Project 1 -->
+                        <a href="https://www.emika-procleaning.com/" target="_blank" class="project-card">
+                            <div class="project-image-wrap">
+                                <img src="https://cdn.prod.website-files.com/67619da91bf286ff47529b42/6787eabd169a1477b4f32854_8.jpg" alt="Emika Pro Cleaning">
+                                <div class="project-overlay">
+                                    <span class="sys-tag">ACCESS NODE ↗</span>
+                                </div>
+                            </div>
+                            <div class="project-meta">
+                                <div class="meta-left">
+                                    <h3>EMIKA PRO</h3>
+                                    <p>Commercial Infrastructure</p>
+                                </div>
+                                <div class="meta-right">
+                                    <span class="tech-pill">Webflow</span>
+                                    <span class="tech-pill">GSAP</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- Project 2 -->
+                        <a href="https://campo-nsn.gov/" target="_blank" class="project-card">
+                            <div class="project-image-wrap">
+                                <img src="https://cdn.prod.website-files.com/6901242e419dbc1b6de62937/69050d8fbfc558aa974d8870_hero.png" alt="Campo NSN Heritage">
+                                <div class="project-overlay">
+                                    <span class="sys-tag">ACCESS NODE ↗</span>
+                                </div>
+                            </div>
+                            <div class="project-meta">
+                                <div class="meta-left">
+                                    <h3>CAMPO NSN</h3>
+                                    <p>Institutional Portal</p>
+                                </div>
+                                <div class="meta-right">
+                                    <span class="tech-pill">Architecture</span>
+                                    <span class="tech-pill">A11y</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- Project 3 -->
+                        <a href="https://jiangsu-da-supply-chain-management.webflow.io/" target="_blank" class="project-card">
+                            <div class="project-image-wrap">
+                                <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop" alt="Jiangsu DA Logistics">
+                                <div class="project-overlay">
+                                    <span class="sys-tag">ACCESS NODE ↗</span>
+                                </div>
+                            </div>
+                            <div class="project-meta">
+                                <div class="meta-left">
+                                    <h3>JIANGSU DA</h3>
+                                    <p>Logistics System</p>
+                                </div>
+                                <div class="meta-right">
+                                    <span class="tech-pill">UX/UI</span>
+                                    <span class="tech-pill">CMS</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="project-card end-card">
+                            <div class="end-content">
+                                <h3 class="display-medium">READY <br>FOR MORE?</h3>
+                                <a href="#contact" class="btn-text-link">INITIATE DIALOGUE ↗</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- 04. SYSTEM CAPABILITIES (SERVICES) -->
+            <section id="capabilities" class="section-capabilities">
+                <div class="container">
+                    <div class="cap-header">
+                        <span class="sys-tag">/ 04 — CAPABILITY MATRIX</span>
+                        <h2 class="display-medium">ENGINEERED TO CONVERT</h2>
+                    </div>
+
+                    <div class="accordion-system">
+                        
+                        <!-- Cap 1 -->
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <span class="cap-id">ENG-01</span>
+                                <h3>High-Fidelity Engineering</h3>
+                                <div class="accordion-icon"></div>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="content-inner">
+                                    <p>We deploy robust, scalable platforms using Next.js and advanced Webflow setups. Moving beyond simple websites to create corporate infrastructures with complex CMS logic, pixel-perfect Figma translations, and rigorous technical SEO architectures.</p>
+                                    <ul class="cap-list">
+                                        <li>Performance Optimization (Core Web Vitals)</li>
+                                        <li>Custom WebGL & GSAP Motion Systems</li>
+                                        <li>Enterprise CMS Architecture</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cap 2 -->
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <span class="cap-id">INF-02</span>
+                                <h3>Global Infrastructure & Localization</h3>
+                                <div class="accordion-icon"></div>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="content-inner">
+                                    <p>Seamlessly scale your digital presence across borders. We architect multi-region setups (.mx, .com, .eu) integrating intelligent routing, strict hreflang strategies, and localized content delivery to dominate international search results.</p>
+                                    <ul class="cap-list">
+                                        <li>Multi-domain & Subdirectory Architecture</li>
+                                        <li>International Technical SEO</li>
+                                        <li>Automated Content Localization Pipelines</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cap 3 -->
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <span class="cap-id">SYS-03</span>
+                                <h3>Operational Ecosystems & AI</h3>
+                                <div class="accordion-icon"></div>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="content-inner">
+                                    <p>Transform your website from a digital brochure into an operational hub. We integrate custom CRM pipelines (HubSpot, Zoho), advanced automation (Zapier/Make), and AI-driven logic to eliminate friction and capture every lead.</p>
+                                    <ul class="cap-list">
+                                        <li>Custom Client Experience Portals</li>
+                                        <li>Automated Ticketing & Lead Routing</li>
+                                        <li>AI-Powered Support & Classification</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- 05. AEO OPTIMIZED FAQ -->
+            <section id="faq" class="section-faq">
+                <div class="container">
+                    <div class="faq-grid">
+                        <div class="faq-intro">
+                            <span class="sys-tag">/ 05 — KNOWLEDGE BASE</span>
+                            <h2 class="display-medium">SYSTEM <br>QUERIES.</h2>
+                            <p class="body-regular text-dim">Optimized for humans and AI Answer Engines. Direct, factual, and transparent operational data.</p>
+                        </div>
+                        
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h4>¿Qué tecnologías utilizan para el desarrollo web?</h4>
+                                <p>Especializamos en arquitecturas modernas y escalables utilizando <strong>Next.js</strong>, <strong>React</strong>, y <strong>Webflow</strong> para el frontend. Dependiendo de los requerimientos de datos, implementamos infraestructuras robustas en <strong>Supabase</strong> o backends custom para máxima seguridad y rendimiento.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>¿Cómo optimizan el diseño UX/UI para aumentar la conversión?</h4>
+                                <p>Operamos bajo el principio de <em>Conversion-Led Architecture</em>. No tomamos decisiones estéticas al azar; analizamos datos de comportamiento de usuario, reducimos la fricción cognitiva en formularios y checkouts, y diseñamos flujos intuitivos con microinteracciones que guían inevitablemente al usuario hacia los objetivos de negocio (CTA).</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>¿Ofrecen soporte y mantenimiento post-lanzamiento?</h4>
+                                <p>Sí, los productos digitales vivos requieren evolución constante. Operamos bajo el modelo de <em>Continuous Evolution</em>. Ofrecemos planes mensuales de retención (retainers) que cubren monitoreo de seguridad, optimización continua de Core Web Vitals, y desarrollo iterativo de nuevas funcionalidades basadas en analytics reales.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>¿Pueden integrar sistemas internos como CRMs o ERPs?</h4>
+                                <p>Absolutamente. Creamos <em>Ecosistemas Operativos</em> conectando la web con herramientas como HubSpot, Salesforce, Zoho, y automatizando flujos de datos a través de Zapier, Make o APIs customizadas, asegurando que ningún lead o dato se pierda en el proceso.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 06. CONVERSION CTA (ACTIVATE) -->
+            <section id="contact" class="section-contact">
+                <div class="container">
+                    <div class="terminal-container">
+                        <div class="terminal-header">
+                            <div class="terminal-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <div class="terminal-title">ASAHI_SECURE_LINK_V2.0</div>
+                        </div>
+                        
+                        <div class="terminal-body">
+                            <div class="terminal-text">
+                                <h2 class="display-large">INITIALIZE <br>PARTNERSHIP.</h2>
+                                <p class="body-large">Deploying average solutions yields average revenue. Provide your coordinates and project parameters to begin system architecture.</p>
+                                
+                                <div class="sys-metrics mt-4">
+                                    <div class="metric">
+                                        <span class="metric-label">RESPONSE_TIME</span>
+                                        <span class="metric-val">&lt; 24H</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-label">ENCRYPTION</span>
+                                        <span class="metric-val">ACTIVE</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="terminal-form">
+                                <form action="https://formspree.io/f/xykddgva" method="POST" id="mainForm">
+                                    <div class="input-group">
+                                        <label for="name" class="sys-tag">PARAM_01: ENTITY_NAME</label>
+                                        <input type="text" id="name" name="name" required placeholder="John Doe">
+                                        <div class="input-line"></div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="email" class="sys-tag">PARAM_02: COM_LINK</label>
+                                        <input type="email" id="email" name="email" required placeholder="john@company.com">
+                                        <div class="input-line"></div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="message" class="sys-tag">PARAM_03: DIRECTIVE</label>
+                                        <textarea id="message" name="message" rows="3" required placeholder="Define target objectives and current infrastructure status..."></textarea>
+                                        <div class="input-line"></div>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn-execute magnetic-btn">
+                                        <span class="btn-text">EXECUTE TRANSMISSION</span>
+                                        <div class="btn-hover-fill"></div>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FOOTER -->
+            <footer class="sys-footer">
+                <div class="container">
+                    <div class="footer-grid">
+                        <div class="footer-brand">
+                            <div class="logo-text">ASAHI</div>
+                            <p class="text-dim mt-1">Engineered Digital Dominance.</p>
+                        </div>
+                        <div class="footer-links">
+                            <span class="sys-tag">NODES</span>
+                            <a href="#hero" class="hover-link">Initialization</a>
+                            <a href="#output" class="hover-link">Output</a>
+                            <a href="#capabilities" class="hover-link">Capabilities</a>
+                            <a href="#faq" class="hover-link">Knowledge Base</a>
+                        </div>
+                        <div class="footer-links">
+                            <span class="sys-tag">COMMS</span>
+                            <a href="https://wa.me/524778777014" target="_blank" class="hover-link">WhatsApp Link</a>
+                            <a href="mailto:hello@asahistudio.com" class="hover-link">Encrypted Mail</a>
+                            <a href="/blog/" class="hover-link">System Logs (Blog)</a>
+                        </div>
+                    </div>
+                    <div class="footer-bottom">
+                        <span class="sys-tag">© 2026 ASAHI STUDIO. ALL SYSTEMS NOMINAL.</span>
+                        <a href="#" class="sys-tag hover-link" id="back-to-top">RETURN TO ROOT ↗</a>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+    </main>
+
+    <script src="js/motion.js"></script>
+</body>
+</html>

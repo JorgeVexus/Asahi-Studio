@@ -1,7 +1,9 @@
 // Supabase Edge Function: send-ticket-notification
 // Lógica robusta para notificaciones de tickets y chats
+/// <reference lib="deno.ns" />
+/// <reference lib="deno.window" />
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { serve } from "std/http/server.ts"
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 const ADMIN_EMAIL = 'jcernalara@gmail.com'
@@ -12,8 +14,7 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
-
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -32,7 +33,7 @@ serve(async (req) => {
     if (table === 'asahi_tickets' && type === 'INSERT') {
       console.log('>>> Evento Directo de Nuevo Ticket Detectado');
       // Enviamos el correo de alta
-      await sendAdminNewTicketEmail(record.subject, record.client_email, record.priority, SENDER_EMAIL);
+      await sendAdminNewTicketEmail(record.subject, record.client_email, record.priority, record.project_name, SENDER_EMAIL);
     }
 
     // LÓGICA PRINCIPAL: Eventos en la tabla de mensajes (que es la más fiable)
@@ -54,7 +55,7 @@ serve(async (req) => {
 
           if (diffSeconds < 120) { // Si el ticket tiene menos de 2 minutos, es un ALTA NUEVA
             console.log('>>> Notificando como NUEVO TICKET (Vía mensaje inicial)');
-            await sendAdminNewTicketEmail(ticket.subject, ticket.client_email, ticket.priority, SENDER_EMAIL);
+            await sendAdminNewTicketEmail(ticket.subject, ticket.client_email, ticket.priority, ticket.project_name, SENDER_EMAIL);
           } else {
             console.log('>>> Notificando como MENSAJE DE CHAT');
             await sendAdminMessageUpdateEmail(record.content, SENDER_EMAIL);
@@ -77,7 +78,7 @@ serve(async (req) => {
       status: 200 
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('ERROR:', error.message);
     return new Response(JSON.stringify({ error: error.message }), { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
@@ -99,21 +100,22 @@ async function getTicketInfo(ticketId: string) {
   return data[0]
 }
 
-async function sendAdminNewTicketEmail(subject: string, client: string, priority: string, from: string) {
+async function sendAdminNewTicketEmail(subject: string, client: string, priority: string, projectName: string | null, from: string) {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
     body: JSON.stringify({
       from,
       to: [ADMIN_EMAIL],
-      subject: `🚀 [NUEVO PROYECTO] ${subject}`,
+      subject: `🚀 [TICKET: ${projectName || 'Sin Proyecto'}] ${subject}`,
       html: `
         <div style="font-family: sans-serif; padding: 25px; border: 2px solid #ff6b4a; border-radius: 12px; background: #fff;">
           <h1 style="color: #ff6b4a; margin-top: 0; font-size: 24px;">¡Misión Inbox: Nuevo Ticket!</h1>
           <p style="font-size: 16px; color: #333;">Se ha registrado un nuevo requerimiento que solicita tu atención.</p>
           <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
           <div style="background: #fdfdfd; padding: 15px; border-radius: 8px;">
-            <p><strong>📂 Proyecto/Asunto:</strong> ${subject}</p>
+            <p><strong>📂 Proyecto:</strong> <span style="color: #ff6b4a; font-weight: bold;">${projectName || 'No especificado'}</span></p>
+            <p><strong>📝 Asunto:</strong> ${subject}</p>
             <p><strong>👤 Cliente:</strong> ${client}</p>
             <p><strong>🚩 Prioridad:</strong> <span style="background: #ff6b4a; color: #fff; padding: 2px 8px; border-radius: 4px; font-weight: bold;">${priority}</span></p>
           </div>

@@ -507,6 +507,11 @@
                     <textarea id="ticketContent" placeholder="Describe el cambio o ajuste necesario..." required></textarea>
                 </div>
                 <div class="form-group">
+                    <label>Proyecto</label>
+                    <input type="text" id="ticketProject" list="projectSuggestions" placeholder="Nombre del proyecto (ej: Mi Web Pro)" required>
+                    <datalist id="projectSuggestions"></datalist>
+                </div>
+                <div class="form-group">
                     <label>Urgencia</label>
                     <select id="ticketPriority">
                         <option value="baja">Baja - Estético / Menor</option>

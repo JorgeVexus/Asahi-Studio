@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <span class="status-badge status-${ticket.status}" style="font-size: 0.6rem;">${ticket.status === 'en_proceso' ? 'PROCESO' : ticket.status.toUpperCase()}</span>
                 </div>
+                ${ticket.project_name ? `<div style="font-size: 0.7rem; color: var(--accent); font-weight: 600; margin: 0.2rem 0;">${ticket.project_name.toUpperCase()}</div>` : ''}
                 <div class="client">${ticket.client_email}</div>
                 <div class="category-tag">${ticket.category || 'AJUSTES'}</div>
                 <div class="client" style="margin-top: 0.4rem; font-size: 0.7rem;">${new Date(ticket.last_message_at).toLocaleDateString()}</div>
@@ -136,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Show chat
         chatView.style.display = 'flex';
         document.getElementById('chatSubject').textContent = ticket.subject;
-        document.getElementById('chatClient').textContent = ticket.client_email;
+        document.getElementById('chatClient').textContent = `${ticket.client_email} ${ticket.project_name ? `• [${ticket.project_name}]` : ''}`;
         updateStatus.value = ticket.status;
 
         fetchMessages(ticket.id);

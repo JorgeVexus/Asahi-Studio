@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${ticket.unread_client ? '<span class="unread-badge"></span>' : ''}
                         <h3>${ticket.subject}</h3>
                     </div>
+                    ${ticket.project_name ? `<div style="font-size: 0.75rem; color: var(--accent); font-weight: 600; margin-bottom: 0.2rem;">${ticket.project_name.toUpperCase()}</div>` : ''}
                     <div class="ticket-meta">
                         <span class="category-tag">${ticket.category || 'AJUSTES'}</span>
                         <span><i data-lucide="clock" size="12"></i> ${new Date(ticket.last_message_at).toLocaleDateString()}</span>
@@ -85,9 +86,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- New Ticket Logic ---
-    openNewTicketBtn.addEventListener('click', () => {
+    openNewTicketBtn.addEventListener('click', async () => {
         document.getElementById('newTicketModal').style.display = 'block';
+        await loadProjectSuggestions();
     });
+
+    async function loadProjectSuggestions() {
+        const datalist = document.getElementById('projectSuggestions');
+        if (!datalist) return;
+
+        const projects = new Set();
+
+        // 1. Sugerencia de Onboarding
+        const { data: onboarding } = await supabase
+            .from('onboarding_responses')
+            .select('company_name')
+            .eq('email', currentEmail)
+            .maybeSingle();
+        
+        if (onboarding && onboarding.company_name) {
+            projects.add(onboarding.company_name);
+        }
+
+        // 2. Sugerencias de tickets previos
+        const { data: pastTickets } = await supabase
+            .from('asahi_tickets')
+            .select('project_name')
+            .eq('client_email', currentEmail)
+            .not('project_name', 'is', null);
+
+        if (pastTickets) {
+            pastTickets.forEach(t => projects.add(t.project_name));
+        }
+
+        // Rellenar datalist
+        datalist.innerHTML = Array.from(projects)
+            .map(p => `<option value="${p}">`)
+            .join('');
+
+        // Si solo hay un proyecto y el campo está vacío, pre-llenarlo
+        const projectInput = document.getElementById('ticketProject');
+        if (projects.size === 1 && !projectInput.value) {
+            projectInput.value = Array.from(projects)[0];
+        }
+    }
 
     async function uploadFiles(files) {
         if (!files || files.length === 0) return [];
@@ -128,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = 'Enviando...';
 
         const subject = document.getElementById('ticketSubject').value;
+        const project = document.getElementById('ticketProject').value;
         const content = document.getElementById('ticketContent').value;
         const priority = document.getElementById('ticketPriority').value;
         const category = document.getElementById('ticketCategory').value;
@@ -144,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .insert([{ 
                     client_email: currentEmail, 
                     subject, 
+                    project_name: project,
                     priority, 
                     category,
                     last_message_at: new Date().toISOString()
