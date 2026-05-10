@@ -16,8 +16,8 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const budgets = ["< $30k MXN", "$30k – $80k", "$80k – $200k", "$200k+"];
-const services = ["Landing", "Website", "E-commerce", "Automatización / IA"];
+const budgets = ["< $200 USD", "$200 – $500 USD", "$500 – $1,000 USD", "$1,000+ USD"];
+const services = ["Landing Express", "Growth (Landing + A/B)", "Pro (SaaS/App)", "Automatización / IA"];
 
 export function ContactForm() {
   const [sent, setSent] = useState(false);
