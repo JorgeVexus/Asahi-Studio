@@ -2,6 +2,10 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+export const config = {
+  runtime: 'edge',
+};
+
 export default async function handler(req: Request) {
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
@@ -22,7 +26,7 @@ export default async function handler(req: Request) {
     }
 
     const { data: resendData, error } = await resend.emails.send({
-      from: 'Asahi Studio Contact <onboarding@asahistudio.lat>', // Using the same verified domain as in onboarding
+      from: 'Asahi Studio Contact <onboarding@asahistudio.lat>',
       to: ['asahizv@gmail.com'],
       subject: `Nuevo mensaje de Contacto de ${name}`,
       replyTo: email,
