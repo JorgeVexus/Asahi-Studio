@@ -25,6 +25,7 @@ export default async function handler(req: Request) {
       });
     }
 
+    // 1. Enviar el correo usando Resend
     const { data: resendData, error } = await resend.emails.send({
       from: 'Asahi Studio Contact <onboarding@asahistudio.lat>',
       to: ['asahizv@gmail.com'],
@@ -50,6 +51,29 @@ export default async function handler(req: Request) {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
+    }
+
+    // 2. Enviar los datos a Google Sheets (Webhook)
+    if (process.env.GOOGLE_SHEET_WEBHOOK_URL) {
+      try {
+        await fetch(process.env.GOOGLE_SHEET_WEBHOOK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            company,
+            budget,
+            service,
+            message,
+          }),
+        });
+      } catch (sheetError) {
+        // No rompemos la respuesta si el webhook falla, pero lo ideal sería registrar el error
+        console.error('Error enviando datos a Google Sheets:', sheetError);
+      }
     }
 
     return new Response(JSON.stringify({ success: true, data: resendData }), {
