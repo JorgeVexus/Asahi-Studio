@@ -109,13 +109,17 @@ export function Pricing() {
               </div>
 
               <h3 className="mt-6 font-display text-3xl leading-tight md:text-4xl">{p.name}</h3>
-              <p className={`mt-3 text-sm ${p.featured ? "text-background/70" : "text-foreground/70"}`}>
+              <p
+                className={`mt-3 text-sm ${p.featured ? "text-background/70" : "text-foreground/70"}`}
+              >
                 {p.desc}
               </p>
 
               <div className="mt-8 flex items-baseline gap-2">
                 <span className="font-display text-5xl tracking-tight md:text-6xl">{p.price}</span>
-                <span className={`font-mono text-xs ${p.featured ? "text-background/60" : "text-muted-foreground"}`}>
+                <span
+                  className={`font-mono text-xs ${p.featured ? "text-background/60" : "text-muted-foreground"}`}
+                >
                   {p.currency}
                 </span>
               </div>
@@ -123,8 +127,12 @@ export function Pricing() {
               <ul className="mt-8 space-y-3 text-sm">
                 {p.features.map((f) => (
                   <li key={f} className="flex gap-3">
-                    <Check className={`mt-0.5 h-4 w-4 shrink-0 ${p.featured ? "text-primary" : "text-primary"}`} />
-                    <span className={p.featured ? "text-background/85" : "text-foreground/80"}>{f}</span>
+                    <Check
+                      className={`mt-0.5 h-4 w-4 shrink-0 ${p.featured ? "text-primary" : "text-primary"}`}
+                    />
+                    <span className={p.featured ? "text-background/85" : "text-foreground/80"}>
+                      {f}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -145,7 +153,8 @@ export function Pricing() {
         </div>
 
         <p className="mt-8 max-w-2xl text-sm text-muted-foreground">
-          ¿No estás seguro qué paquete necesitas? Escríbenos y te recomendamos el alcance ideal sin compromiso.
+          ¿No estás seguro qué paquete necesitas? Escríbenos y te recomendamos el alcance ideal sin
+          compromiso.
         </p>
       </div>
     </section>

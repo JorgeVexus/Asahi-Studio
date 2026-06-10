@@ -17,11 +17,23 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const budgets = ["< $200 USD", "$200 – $500 USD", "$500 – $1,000 USD", "$1,000+ USD"];
-const services = ["Landing Express", "Growth (Landing + A/B)", "Pro (SaaS/App)", "Automatización / IA"];
+const services = [
+  "Landing Express",
+  "Growth (Landing + A/B)",
+  "Pro (SaaS/App)",
+  "Automatización / IA",
+];
 
 export function ContactForm() {
   const [sent, setSent] = useState(false);
-  const { register, handleSubmit, formState: { errors, isSubmitting }, watch, setValue, reset } = useForm<FormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    watch,
+    setValue,
+    reset,
+  } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { name: "", email: "", company: "", budget: "", service: "", message: "" },
   });
@@ -56,24 +68,43 @@ export function ContactForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2">
         <Field label="Nombre" error={errors.name?.message}>
-          <input {...register("name")} maxLength={80} placeholder="Tu nombre"
-            className="w-full border-b border-background/30 bg-transparent py-3 text-lg text-background placeholder:text-background/30 outline-none transition focus:border-primary" />
+          <input
+            {...register("name")}
+            maxLength={80}
+            placeholder="Tu nombre"
+            className="w-full border-b border-background/30 bg-transparent py-3 text-lg text-background placeholder:text-background/30 outline-none transition focus:border-primary"
+          />
         </Field>
         <Field label="Email" error={errors.email?.message}>
-          <input {...register("email")} type="email" maxLength={160} placeholder="tu@empresa.com"
-            className="w-full border-b border-background/30 bg-transparent py-3 text-lg text-background placeholder:text-background/30 outline-none transition focus:border-primary" />
+          <input
+            {...register("email")}
+            type="email"
+            maxLength={160}
+            placeholder="tu@empresa.com"
+            className="w-full border-b border-background/30 bg-transparent py-3 text-lg text-background placeholder:text-background/30 outline-none transition focus:border-primary"
+          />
         </Field>
       </div>
 
       <Field label="Empresa (opcional)">
-        <input {...register("company")} maxLength={120} placeholder="Asahi Co."
-          className="w-full border-b border-background/30 bg-transparent py-3 text-lg text-background placeholder:text-background/30 outline-none transition focus:border-primary" />
+        <input
+          {...register("company")}
+          maxLength={120}
+          placeholder="Asahi Co."
+          className="w-full border-b border-background/30 bg-transparent py-3 text-lg text-background placeholder:text-background/30 outline-none transition focus:border-primary"
+        />
       </Field>
 
       <Field label="¿Qué necesitas?" error={errors.service?.message}>
         <div className="flex flex-wrap gap-2 pt-2">
           {services.map((s) => (
-            <Chip key={s} active={service === s} onClick={() => setValue("service", s, { shouldValidate: true })}>{s}</Chip>
+            <Chip
+              key={s}
+              active={service === s}
+              onClick={() => setValue("service", s, { shouldValidate: true })}
+            >
+              {s}
+            </Chip>
           ))}
         </div>
       </Field>
@@ -81,19 +112,32 @@ export function ContactForm() {
       <Field label="Presupuesto" error={errors.budget?.message}>
         <div className="flex flex-wrap gap-2 pt-2">
           {budgets.map((b) => (
-            <Chip key={b} active={budget === b} onClick={() => setValue("budget", b, { shouldValidate: true })}>{b}</Chip>
+            <Chip
+              key={b}
+              active={budget === b}
+              onClick={() => setValue("budget", b, { shouldValidate: true })}
+            >
+              {b}
+            </Chip>
           ))}
         </div>
       </Field>
 
       <Field label="Cuéntanos del proyecto" error={errors.message?.message}>
-        <textarea {...register("message")} rows={4} maxLength={1000} placeholder="Objetivos, tiempos, referencias..."
-          className="w-full resize-none border-b border-background/30 bg-transparent py-3 text-lg text-background placeholder:text-background/30 outline-none transition focus:border-primary" />
+        <textarea
+          {...register("message")}
+          rows={4}
+          maxLength={1000}
+          placeholder="Objetivos, tiempos, referencias..."
+          className="w-full resize-none border-b border-background/30 bg-transparent py-3 text-lg text-background placeholder:text-background/30 outline-none transition focus:border-primary"
+        />
       </Field>
 
       <motion.button
-        whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-        type="submit" disabled={isSubmitting}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        type="submit"
+        disabled={isSubmitting}
         className="group inline-flex items-center gap-3 bg-primary px-7 py-4 text-base font-medium text-background transition hover:bg-background hover:text-foreground disabled:opacity-60"
       >
         {isSubmitting ? "Enviando..." : sent ? "✓ Enviado" : "Enviar mensaje"}
@@ -103,20 +147,41 @@ export function ContactForm() {
   );
 }
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({
+  label,
+  error,
+  children,
+}: {
+  label: string;
+  error?: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block">
-      <span className="font-mono text-[11px] uppercase tracking-widest text-background/50">{label}</span>
+      <span className="font-mono text-[11px] uppercase tracking-widest text-background/50">
+        {label}
+      </span>
       {children}
       {error && <span className="mt-1 block font-mono text-[11px] text-primary">{error}</span>}
     </label>
   );
 }
 
-function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
-    <button type="button" onClick={onClick}
-      className={`border px-4 py-2 font-mono text-xs uppercase tracking-wider transition ${active ? "border-primary bg-primary text-background" : "border-background/30 text-background/70 hover:border-background"}`}>
+    <button
+      type="button"
+      onClick={onClick}
+      className={`border px-4 py-2 font-mono text-xs uppercase tracking-wider transition ${active ? "border-primary bg-primary text-background" : "border-background/30 text-background/70 hover:border-background"}`}
+    >
       {children}
     </button>
   );

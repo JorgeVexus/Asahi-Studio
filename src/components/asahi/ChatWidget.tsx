@@ -1,62 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
+import { FAQS, type Faq } from "./faq-data";
 
 type Msg = { role: "bot" | "user"; text: string; suggestions?: string[] };
-
-type Faq = {
-  q: string;
-  keywords: string[];
-  a: string;
-};
-
-const FAQS: Faq[] = [
-  {
-    q: "¿Cuánto cuesta una landing page?",
-    keywords: ["precio", "costo", "cuesta", "cobran", "tarifa", "cuanto"],
-    a: "Nuestros paquetes empiezan en $120–200 USD (Landing Express), $300–500 USD (Growth) y $500–1,000+ USD (Pro · SaaS). Cada propuesta se ajusta al alcance real. ¿Quieres que te recomiende uno?",
-  },
-  {
-    q: "¿Cuánto tarda el proyecto?",
-    keywords: ["tiempo", "tarda", "dura", "entrega", "plazo", "rapido", "cuando"],
-    a: "Una Landing Express se entrega en 3–5 días hábiles. Proyectos Growth y Pro toman entre 14 y 30 días según el alcance.",
-  },
-  {
-    q: "¿Qué tecnologías usan?",
-    keywords: ["tecnologia", "stack", "webflow", "next", "framework", "herramientas"],
-    a: "Trabajamos en Webflow para velocidad de salida y Next.js cuando necesitas APIs, dashboards o integraciones de IA. Automatizaciones con n8n, Make o Zapier.",
-  },
-  {
-    q: "¿Hacen e-commerce?",
-    keywords: ["ecommerce", "tienda", "shopify", "vender", "carrito"],
-    a: "Sí. Construimos tiendas en Shopify y catálogos custom en Next.js con checkout optimizado y SEO técnico.",
-  },
-  {
-    q: "¿Incluyen copy y contenido?",
-    keywords: ["copy", "texto", "contenido", "redaccion", "escribir"],
-    a: "Sí, todos los paquetes incluyen copy estratégico enfocado en conversión. Si tienes contenido propio, lo refinamos.",
-  },
-  {
-    q: "¿Hacen integraciones con IA?",
-    keywords: ["ia", "inteligencia", "ai", "openai", "agentes", "chatbot", "automatizacion"],
-    a: "Sí. Integramos agentes con OpenAI, automatizaciones con n8n/Make y conexiones con CRM, WhatsApp API y email marketing.",
-  },
-  {
-    q: "¿Cómo empezamos a trabajar?",
-    keywords: ["empezar", "comenzar", "iniciar", "proceso", "contratar"],
-    a: "Tres pasos: (1) llamada de descubrimiento, (2) propuesta y cotización, (3) kickoff. Puedes escribirnos a hola@asahi.studio o por WhatsApp.",
-  },
-  {
-    q: "¿Trabajan con clientes fuera de México?",
-    keywords: ["mexico", "remoto", "internacional", "fuera", "pais", "ubicacion"],
-    a: "Sí. Estamos en CDMX y Guadalajara, pero trabajamos 100% remoto con clientes de toda LATAM, EU y US.",
-  },
-  {
-    q: "¿Ofrecen mantenimiento?",
-    keywords: ["mantenimiento", "soporte", "actualizacion", "despues"],
-    a: "Sí, ofrecemos planes de mantenimiento mensual y consultoría continua tras el lanzamiento.",
-  },
-];
 
 const INITIAL_SUGGESTIONS = FAQS.slice(0, 4).map((f) => f.q);
 
@@ -185,9 +132,15 @@ export function ChatWidget() {
               <span className="font-jp text-lg text-primary">朝</span>
             </div>
 
-            <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto bg-background px-4 py-5">
+            <div
+              ref={scrollRef}
+              className="flex-1 space-y-4 overflow-y-auto bg-background px-4 py-5"
+            >
               {messages.map((m, i) => (
-                <div key={i} className={`flex flex-col gap-2 ${m.role === "user" ? "items-end" : "items-start"}`}>
+                <div
+                  key={i}
+                  className={`flex flex-col gap-2 ${m.role === "user" ? "items-end" : "items-start"}`}
+                >
                   <motion.div
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}

@@ -37,7 +37,10 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section id="testimonials" className="relative border-t border-foreground/15 bg-foreground text-background">
+    <section
+      id="testimonials"
+      className="relative border-t border-foreground/15 bg-foreground text-background"
+    >
       <div className="pointer-events-none absolute inset-0 grain" />
       <div className="relative mx-auto max-w-[1400px] px-6 py-24 md:px-10 md:py-32">
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
@@ -50,7 +53,8 @@ export function Testimonials() {
             </h2>
           </div>
           <p className="max-w-sm text-background/70">
-            Negocios reales, métricas reales. Aquí algunos de los equipos con los que hemos colaborado.
+            Negocios reales, métricas reales. Aquí algunos de los equipos con los que hemos
+            colaborado.
           </p>
         </div>
 

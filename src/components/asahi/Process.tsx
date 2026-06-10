@@ -2,11 +2,36 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
 const steps = [
-  { n: "01", jp: "発見", title: "Discovery", body: "Entrevista, análisis de competencia y definición de objetivo de conversión." },
-  { n: "02", jp: "戦略", title: "Estrategia", body: "Wireframe, arquitectura de mensaje y copy enfocado en el cliente ideal." },
-  { n: "03", jp: "設計", title: "Diseño", body: "Identidad visual, sistema de componentes y prototipo interactivo móvil-first." },
-  { n: "04", jp: "開発", title: "Desarrollo", body: "Build en Webflow o Next.js. SEO, performance y accesibilidad desde día uno." },
-  { n: "05", jp: "起動", title: "Launch & CRO", body: "Analítica, A/B tests y optimización continua. Tu sitio mejora cada mes." },
+  {
+    n: "01",
+    jp: "発見",
+    title: "Discovery",
+    body: "Entrevista, análisis de competencia y definición de objetivo de conversión.",
+  },
+  {
+    n: "02",
+    jp: "戦略",
+    title: "Estrategia",
+    body: "Wireframe, arquitectura de mensaje y copy enfocado en el cliente ideal.",
+  },
+  {
+    n: "03",
+    jp: "設計",
+    title: "Diseño",
+    body: "Identidad visual, sistema de componentes y prototipo interactivo móvil-first.",
+  },
+  {
+    n: "04",
+    jp: "開発",
+    title: "Desarrollo",
+    body: "Build en Webflow o Next.js. SEO, performance y accesibilidad desde día uno.",
+  },
+  {
+    n: "05",
+    jp: "起動",
+    title: "Launch & CRO",
+    body: "Analítica, A/B tests y optimización continua. Tu sitio mejora cada mes.",
+  },
 ];
 
 export function Process() {
@@ -42,9 +67,15 @@ export function Process() {
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: i * 0.05 }}
                 className="group grid grid-cols-12 items-baseline gap-4 py-8 transition-colors hover:bg-background/5 md:py-10"
               >
-                <span className="col-span-2 font-mono text-sm text-background/50 transition group-hover:text-primary md:col-span-1">{s.n}</span>
-                <span className="col-span-10 font-jp text-xl text-primary md:col-span-1">{s.jp}</span>
-                <h3 className="col-span-12 font-display text-3xl transition group-hover:translate-x-2 md:col-span-4 md:text-4xl">{s.title}</h3>
+                <span className="col-span-2 font-mono text-sm text-background/50 transition group-hover:text-primary md:col-span-1">
+                  {s.n}
+                </span>
+                <span className="col-span-10 font-jp text-xl text-primary md:col-span-1">
+                  {s.jp}
+                </span>
+                <h3 className="col-span-12 font-display text-3xl transition group-hover:translate-x-2 md:col-span-4 md:text-4xl">
+                  {s.title}
+                </h3>
                 <p className="col-span-12 text-background/70 md:col-span-6">{s.body}</p>
               </motion.li>
             ))}

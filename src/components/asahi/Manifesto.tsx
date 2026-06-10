@@ -1,13 +1,27 @@
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { useRef } from "react";
 
-const text = "Un sitio web no es un folleto digital. Es tu mejor vendedor — trabajando 24/7, midiendo todo, mejorando cada semana.";
+const text =
+  "Un sitio web no es un folleto digital. Es tu mejor vendedor — trabajando 24/7, midiendo todo, mejorando cada semana.";
 const words = text.split(" ");
 
-function Word({ word, progress, range, italic }: { word: string; progress: MotionValue<number>; range: [number, number]; italic: boolean }) {
+function Word({
+  word,
+  progress,
+  range,
+  italic,
+}: {
+  word: string;
+  progress: MotionValue<number>;
+  range: [number, number];
+  italic: boolean;
+}) {
   const opacity = useTransform(progress, range, [0.15, 1]);
   return (
-    <motion.span style={{ opacity }} className={`mr-[0.25em] inline-block ${italic ? "italic text-primary" : ""}`}>
+    <motion.span
+      style={{ opacity }}
+      className={`mr-[0.25em] inline-block ${italic ? "italic text-primary" : ""}`}
+    >
       {word}
     </motion.span>
   );
@@ -44,7 +58,8 @@ export function Manifesto() {
           viewport={{ once: true }}
           className="mt-10 max-w-xl text-foreground/60"
         >
-          En Asahi combinamos diseño con propósito, ingeniería rápida y automatización inteligente. No vendemos páginas. Vendemos crecimiento.
+          En Asahi combinamos diseño con propósito, ingeniería rápida y automatización inteligente.
+          No vendemos páginas. Vendemos crecimiento.
         </motion.p>
       </div>
     </section>

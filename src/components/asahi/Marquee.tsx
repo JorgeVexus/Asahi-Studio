@@ -9,11 +9,26 @@ export function Marquee() {
   const skew = useTransform(smooth, [-2000, 0, 2000], [-8, 0, 8]);
   const speed = useTransform(smooth, [-3000, 0, 3000], [-2, 1, 4]);
 
-  const items = ["Webflow", "Next.js", "React", "Framer", "Shopify", "OpenAI", "n8n", "Make", "Supabase", "Tailwind"];
+  const items = [
+    "Webflow",
+    "Next.js",
+    "React",
+    "Framer",
+    "Shopify",
+    "OpenAI",
+    "n8n",
+    "Make",
+    "Supabase",
+    "Tailwind",
+  ];
   const row = [...items, ...items];
 
   return (
-    <div ref={ref} className="relative overflow-hidden border-y border-foreground/15 bg-foreground py-6 text-background">
+    <div
+      ref={ref}
+      className="marquee-pausable relative overflow-hidden border-y border-foreground/15 bg-foreground py-6 text-background"
+      aria-label="Tecnologías: Webflow, Next.js, React, Framer, Shopify, OpenAI, n8n, Make, Supabase, Tailwind"
+    >
       <motion.div
         style={{ skewX: skew, x: useTransform(speed, (v) => `${v * -50}px`) }}
         className="marquee flex w-max gap-12 whitespace-nowrap font-display text-3xl italic md:text-5xl"

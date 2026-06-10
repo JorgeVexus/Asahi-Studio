@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function Preloader() {
   const [progress, setProgress] = useState(0);
@@ -7,8 +7,8 @@ export function Preloader() {
 
   useEffect(() => {
     // Bloquear el scroll
-    document.body.style.overflow = 'hidden';
-    
+    document.body.style.overflow = "hidden";
+
     // Simular progreso de carga
     let currentProgress = 0;
     const interval = setInterval(() => {
@@ -18,7 +18,7 @@ export function Preloader() {
         clearInterval(interval);
         setTimeout(() => {
           setIsLoaded(true);
-          document.body.style.overflow = 'unset';
+          document.body.style.overflow = "unset";
         }, 500); // Pequeña pausa al llegar al 100%
       }
       setProgress(currentProgress);
@@ -26,7 +26,7 @@ export function Preloader() {
 
     return () => {
       clearInterval(interval);
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, []);
 
@@ -35,7 +35,7 @@ export function Preloader() {
       {!isLoaded && (
         <motion.div
           initial={{ y: 0 }}
-          exit={{ y: '-100%' }}
+          exit={{ y: "-100%" }}
           transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background text-foreground"
         >
@@ -49,18 +49,18 @@ export function Preloader() {
           {/* Centro: Sol y Logo */}
           <div className="flex flex-col items-center justify-center gap-6">
             {/* Sol Rojo */}
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 1, ease: "easeOut" }}
               className="h-32 w-32 rounded-full bg-primary sun-pulse"
               style={{
-                boxShadow: '0 0 60px var(--color-primary)'
+                boxShadow: "0 0 60px var(--color-primary)",
               }}
             />
-            
+
             {/* Logo debajo del sol */}
-            <motion.img 
+            <motion.img
               src="/Identidad/Logo%20only%20letter.svg"
               alt="Asahi Studio"
               initial={{ opacity: 0, y: 10 }}
@@ -74,13 +74,13 @@ export function Preloader() {
           <div className="absolute bottom-0 left-0 w-full">
             <div className="flex justify-between items-center px-6 md:px-10 pb-4 font-mono text-[10px] uppercase tracking-[0.3em] text-foreground/50">
               <div>Cargando Experiencia</div>
-              <div>{progress < 100 ? `0${progress}`.slice(-2) : '100'}</div>
+              <div>{progress < 100 ? `0${progress}`.slice(-2) : "100"}</div>
             </div>
             {/* Barra inferior */}
             <div className="h-0.5 w-full bg-border">
-              <motion.div 
+              <motion.div
                 className="h-full bg-primary"
-                initial={{ width: '0%' }}
+                initial={{ width: "0%" }}
                 animate={{ width: `${progress}%` }}
                 transition={{ ease: "linear", duration: 0.1 }}
               />

@@ -7,6 +7,7 @@ import { Services } from "@/components/asahi/Services";
 import { Process } from "@/components/asahi/Process";
 import { Work } from "@/components/asahi/Work";
 import { Pricing } from "@/components/asahi/Pricing";
+import { Faq } from "@/components/asahi/Faq";
 import { Testimonials } from "@/components/asahi/Testimonials";
 import { Manifesto } from "@/components/asahi/Manifesto";
 import { Contact } from "@/components/asahi/Contact";
@@ -32,6 +33,7 @@ function Index() {
       <Work />
       <Testimonials />
       <Pricing />
+      <Faq />
       <Manifesto />
       <Contact />
       <Footer />

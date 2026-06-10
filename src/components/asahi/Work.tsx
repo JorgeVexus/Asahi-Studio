@@ -1,9 +1,9 @@
 import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
-import campo from "@/assets/work-campo.png";
-import emika from "@/assets/work-emika.png";
-import beauty from "@/assets/work-beautyhealth.png";
-import china from "@/assets/work-chinasourcing.png";
+import campo from "@/assets/work-campo.webp";
+import emika from "@/assets/work-emika.webp";
+import beauty from "@/assets/work-beautyhealth.webp";
+import china from "@/assets/work-chinasourcing.webp";
 
 const projects = [
   {
@@ -61,7 +61,10 @@ export function Work() {
   };
 
   return (
-    <section id="work" className="relative border-t border-foreground/15 bg-foreground text-background">
+    <section
+      id="work"
+      className="relative border-t border-foreground/15 bg-foreground text-background"
+    >
       <div className="mx-auto max-w-[1400px] px-6 py-24 md:px-10 md:py-32">
         <div className="flex items-end justify-between">
           <div>
@@ -73,7 +76,8 @@ export function Work() {
             </h2>
           </div>
           <p className="hidden max-w-xs font-mono text-xs uppercase tracking-widest text-background/50 md:block">
-            Pasa el cursor / toca →<br />Ver vista previa en vivo
+            Pasa el cursor / toca →<br />
+            Ver vista previa en vivo
           </p>
         </div>
 
@@ -98,12 +102,16 @@ export function Work() {
               >
                 <img
                   src={projects[active].image}
-                  alt={projects[active].title}
+                  alt={`Captura del sitio web de ${projects[active].title}, proyecto de Asahi Studio`}
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover object-top"
                 />
                 <div
                   className="absolute inset-0 mix-blend-overlay opacity-30"
-                  style={{ background: `radial-gradient(circle at 50% 50%, ${projects[active].hue}, transparent 70%)` }}
+                  style={{
+                    background: `radial-gradient(circle at 50% 50%, ${projects[active].hue}, transparent 70%)`,
+                  }}
                 />
                 <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-foreground/85 px-5 py-3 backdrop-blur">
                   <span className="font-mono text-[11px] uppercase tracking-widest text-background/70">
@@ -131,7 +139,7 @@ export function Work() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}
-                  className="group relative flex items-center justify-between gap-6 py-8 md:py-10"
+                  className="no-tap-highlight group relative block py-6 md:flex md:items-center md:justify-between md:gap-6 md:py-10"
                   data-cursor="hover"
                 >
                   {/* hover fill */}
@@ -144,6 +152,37 @@ export function Work() {
                     className="absolute inset-x-0 bottom-0 top-0 -z-10 opacity-15"
                   />
 
+                  {/* mobile full-width preview card */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.97 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="relative mb-5 aspect-[16/10] w-full overflow-hidden border border-background/15 md:hidden"
+                  >
+                    <img
+                      src={p.image}
+                      alt={`Captura del sitio web de ${p.title}, proyecto de Asahi Studio`}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover object-top"
+                    />
+                    <div
+                      className="absolute inset-0 mix-blend-overlay opacity-30"
+                      style={{
+                        background: `radial-gradient(circle at 50% 50%, ${p.hue}, transparent 70%)`,
+                      }}
+                    />
+                    <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-foreground/85 px-4 py-2.5 backdrop-blur">
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-background/70">
+                        {p.tag}
+                      </span>
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-primary">
+                        Visitar ↗
+                      </span>
+                    </div>
+                  </motion.div>
+
                   <div className="flex min-w-0 items-baseline gap-6 md:gap-10">
                     <span className="font-mono text-xs text-background/40">{p.n}</span>
                     <h3
@@ -155,8 +194,8 @@ export function Work() {
                     </h3>
                   </div>
 
-                  <div className="flex shrink-0 items-center gap-4 md:gap-8">
-                    <span className="hidden font-mono text-[11px] uppercase tracking-widest text-background/50 md:block">
+                  <div className="mt-3 flex shrink-0 items-center justify-between gap-4 pl-9 md:mt-0 md:justify-start md:gap-8 md:pl-0">
+                    <span className="font-mono text-[11px] uppercase tracking-widest text-background/50">
                       {p.metric}
                     </span>
                     <motion.span
@@ -166,17 +205,6 @@ export function Work() {
                     >
                       →
                     </motion.span>
-                  </div>
-
-                  {/* mobile preview */}
-                  <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 md:hidden">
-                    <motion.img
-                      src={p.image}
-                      alt=""
-                      initial={{ opacity: 0.5 }}
-                      animate={{ opacity: active === i ? 0.9 : 0.35 }}
-                      className="h-14 w-20 object-cover object-top opacity-50"
-                    />
                   </div>
                 </motion.a>
               </li>
