@@ -1,34 +1,25 @@
-import { Resend } from 'resend';
+import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const runtime = "edge";
 
-export const config = {
-  runtime: 'edge',
-};
-
-export default async function handler(req: Request) {
-  if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+export async function POST(req: Request) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
     const data = await req.json();
     const { email, name, company, budget, service, message } = data;
 
     if (!email || !name || !message) {
-      return new Response(JSON.stringify({ error: 'Missing required fields' }), {
+      return new Response(JSON.stringify({ error: "Missing required fields" }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     }
 
     // 1. Enviar el correo usando Resend
     const { data: resendData, error } = await resend.emails.send({
-      from: 'Asahi Studio Contact <onboarding@asahistudio.lat>',
-      to: ['asahizv@gmail.com'],
+      from: "Asahi Studio Contact <onboarding@asahistudio.lat>",
+      to: ["asahizv@gmail.com"],
       subject: `Nuevo mensaje de Contacto de ${name}`,
       replyTo: email,
       html: `
@@ -36,9 +27,9 @@ export default async function handler(req: Request) {
           <h2 style="color: #ff6b4a;">Nuevo Lead desde la Landing Page</h2>
           <p><strong>Nombre:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Empresa:</strong> ${company || 'No especificada'}</p>
-          <p><strong>Presupuesto:</strong> ${budget || 'No especificado'}</p>
-          <p><strong>Servicio:</strong> ${service || 'No especificado'}</p>
+          <p><strong>Empresa:</strong> ${company || "No especificada"}</p>
+          <p><strong>Presupuesto:</strong> ${budget || "No especificado"}</p>
+          <p><strong>Servicio:</strong> ${service || "No especificado"}</p>
           <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
           <h3>Mensaje:</h3>
           <p style="white-space: pre-wrap;">${message}</p>
@@ -49,7 +40,7 @@ export default async function handler(req: Request) {
     if (error) {
       return new Response(JSON.stringify({ error: error.message }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -57,9 +48,9 @@ export default async function handler(req: Request) {
     if (process.env.GOOGLE_SHEET_WEBHOOK_URL) {
       try {
         await fetch(process.env.GOOGLE_SHEET_WEBHOOK_URL, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             name,
@@ -72,18 +63,19 @@ export default async function handler(req: Request) {
         });
       } catch (sheetError) {
         // No rompemos la respuesta si el webhook falla, pero lo ideal sería registrar el error
-        console.error('Error enviando datos a Google Sheets:', sheetError);
+        console.error("Error enviando datos a Google Sheets:", sheetError);
       }
     }
 
     return new Response(JSON.stringify({ success: true, data: resendData }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
-  } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return new Response(JSON.stringify({ error: message }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 }

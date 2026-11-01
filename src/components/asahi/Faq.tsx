@@ -1,6 +1,9 @@
+"use client";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { FAQS } from "./faq-data";
+import { useTranslations } from "next-intl";
+import { useFaqs } from "./use-faqs";
 
 function FaqItem({
   q,
@@ -64,12 +67,14 @@ function FaqItem({
 }
 
 export function Faq() {
+  const t = useTranslations("faq");
+  const faqs = useFaqs();
   const [open, setOpen] = useState<number | null>(0);
 
   return (
     <section
       id="faq"
-      aria-label="Preguntas frecuentes"
+      aria-label={t("ariaLabel")}
       className="relative border-t border-foreground/15 bg-background"
     >
       <div className="mx-auto max-w-[1400px] px-6 py-24 md:px-10 md:py-32">
@@ -77,20 +82,17 @@ export function Faq() {
           <div className="md:col-span-4">
             <div className="md:sticky md:top-28">
               <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                <span className="text-primary">●</span> FAQ · 質問
+                <span className="text-primary">●</span> {t("eyebrow")}
               </p>
               <h2 className="mt-4 font-display text-5xl font-semibold leading-[0.95] tracking-tight md:text-6xl text-balance">
-                Preguntas <span className="italic text-primary">frecuentes</span>.
+                {t("titlePre")} <span className="italic text-primary">{t("titleHighlight")}</span>.
               </h2>
-              <p className="mt-6 max-w-sm text-foreground/70">
-                Lo que todo mundo nos pregunta antes de empezar. ¿Falta la tuya? Escríbenos y
-                respondemos en menos de 24 horas.
-              </p>
+              <p className="mt-6 max-w-sm text-foreground/70">{t("description")}</p>
               <a
                 href="#contact"
                 className="group mt-8 hidden items-center gap-3 border border-foreground bg-foreground px-5 py-3 text-sm font-medium text-background transition hover:bg-primary hover:border-primary md:inline-flex"
               >
-                Hacer otra pregunta
+                {t("cta")}
                 <span className="transition group-hover:translate-x-1">→</span>
               </a>
             </div>
@@ -98,7 +100,7 @@ export function Faq() {
 
           <div className="md:col-span-8">
             <div className="border-t border-foreground/15">
-              {FAQS.map((f, i) => (
+              {faqs.map((f, i) => (
                 <FaqItem
                   key={f.q}
                   q={f.q}

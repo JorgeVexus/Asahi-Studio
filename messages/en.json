@@ -1,0 +1,389 @@
+{
+  "meta": {
+    "title": "Asahi Studio | Web Design & Development in Mexico — Landing Pages That Convert",
+    "description": "A web design and development studio based in Mexico. High-conversion landing pages, e-commerce on Shopify and Next.js, and AI-driven automations. Delivered in 3–14 days. Get a free quote.",
+    "keywords": "mexico web design, mexico web development, landing pages, cdmx web agency, guadalajara web design, webflow mexico, next.js mexico, shopify e-commerce, ai automation, digital agency",
+    "ogTitle": "Asahi Studio | Web Design & Development in Mexico — Landing Pages That Convert",
+    "ogDescription": "High-conversion landing pages, scalable e-commerce and AI automations. Strategic design, never templates. Built in Mexico for all of LATAM and the US.",
+    "twitterTitle": "Asahi Studio | Web Design & Development in Mexico",
+    "twitterDescription": "Landing pages that convert, e-commerce and AI automations. Strategic design, built in Mexico.",
+    "ogImageAlt": "Asahi Studio — premium web design and development in Mexico",
+    "noscriptTitle": "Asahi Studio — Web Design & Development in Mexico",
+    "noscriptBody": "We build high-conversion landing pages, e-commerce on Shopify and Next.js, and AI automations. Delivery from 3 business days. Packages start at $120 USD.",
+    "noscriptContact": "Get in touch"
+  },
+  "notFound": {
+    "eyebrow": "404 — 迷子",
+    "title": "Lost",
+    "body": "This page isn't on our map.",
+    "cta": "Back to home"
+  },
+  "preloader": {
+    "brand": "Asahi Studio",
+    "jp": "朝日 - 旭",
+    "region": "MX — 2026",
+    "loading": "Loading Experience"
+  },
+  "nav": {
+    "ariaMain": "Main navigation",
+    "ariaMobile": "Mobile navigation",
+    "ariaHome": "Asahi Studio — home",
+    "links": {
+      "services": { "label": "Services", "jp": "提供" },
+      "process": { "label": "Process", "jp": "工程" },
+      "work": { "label": "Work", "jp": "仕事" },
+      "pricing": { "label": "Pricing", "jp": "料金" },
+      "faq": { "label": "FAQ", "jp": "質問" },
+      "contact": { "label": "Contact", "jp": "連絡" }
+    },
+    "ctaDesktop": "Start a project",
+    "ctaMobile": "Get a quote",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "menuLabel": "Menu",
+    "menuLabelJp": "目次",
+    "email": "hola@asahi.studio",
+    "brandJp": "朝日スタジオ",
+    "language": "Language",
+    "langEs": "ES",
+    "langEn": "EN"
+  },
+  "hero": {
+    "eyebrowJp": "朝日スタジオ",
+    "eyebrow": "Digital studio · MX",
+    "titleLine1": "Landing",
+    "titleLine2": "pages",
+    "titleLine3Pre": "that",
+    "titleLine3Highlight": "convert",
+    "description": "We design and build fast, strategic sites optimized to generate real customers. Webflow, Next.js, automations and AI — custom solutions, never templates.",
+    "ctaPrimary": "Get a quote",
+    "ctaSecondary": "See recent work ↓",
+    "scroll": "Scroll",
+    "stats": {
+      "pagespeed": "Average PageSpeed",
+      "conversion": "Conversion lift",
+      "timeToLaunch": "Time-to-launch",
+      "madeIn": "Made in Mexico"
+    }
+  },
+  "marquee": {
+    "aria": "Technologies: Webflow, Next.js, React, Framer, Shopify, OpenAI, n8n, Make, Supabase, Tailwind"
+  },
+  "services": {
+    "eyebrow": "Services · 提供",
+    "titlePre": "What we",
+    "titleHighlight": "do",
+    "description": "Four disciplines. One obsession: making your site the best sales tool your business has.",
+    "items": {
+      "landing": {
+        "jp": "着陸",
+        "title": "High-conversion landing pages",
+        "body": "Sales-focused design, strategic copy and CRO. Every section earns its place on the page.",
+        "points": ["Strategic wireframing", "Persuasive copy", "A/B test ready"]
+      },
+      "ecommerce": {
+        "jp": "商店",
+        "title": "E-commerce & full websites",
+        "body": "Shopify storefronts and multi-page Next.js sites. Flawless performance, SEO and mobile experience.",
+        "points": ["Shopify / Next.js", "Scalable catalog", "Optimized checkout"]
+      },
+      "automation": {
+        "jp": "自動化",
+        "title": "Automation & AI integration",
+        "body": "Your site connected to CRM, WhatsApp, email and AI agents. Capture, qualify and respond automatically.",
+        "points": ["n8n / Make / Zapier", "OpenAI-powered agents", "CRM + WhatsApp API"]
+      },
+      "custom": {
+        "jp": "特注",
+        "title": "Custom-built solutions",
+        "body": "Zero generic templates. Every project is designed around your business, your customer and your goal.",
+        "points": ["Digital branding", "Internal dashboards", "Ongoing consulting"]
+      }
+    }
+  },
+  "process": {
+    "eyebrow": "Process · 工程",
+    "titlePre": "From brief to",
+    "titleHighlight": "launch",
+    "titlePost": "in 14–30 days.",
+    "steps": {
+      "discovery": {
+        "jp": "発見",
+        "title": "Discovery",
+        "body": "Interview, competitor analysis and defining your conversion goal."
+      },
+      "strategy": {
+        "jp": "戦略",
+        "title": "Strategy",
+        "body": "Wireframing, message architecture and copy built around your ideal customer."
+      },
+      "design": {
+        "jp": "設計",
+        "title": "Design",
+        "body": "Visual identity, component system and a mobile-first interactive prototype."
+      },
+      "development": {
+        "jp": "開発",
+        "title": "Development",
+        "body": "Built on Webflow or Next.js. SEO, performance and accessibility from day one."
+      },
+      "launch": {
+        "jp": "起動",
+        "title": "Launch & CRO",
+        "body": "Analytics, A/B tests and continuous optimization. Your site keeps improving every month."
+      }
+    }
+  },
+  "work": {
+    "eyebrow": "Featured work · 仕事",
+    "titlePre": "Real",
+    "titleHighlight": "results",
+    "hint": "Hover / tap →",
+    "hintSub": "See live preview",
+    "visit": "Visit ↗",
+    "altPrefix": "Screenshot of the",
+    "altSuffix": "website, an Asahi Studio project",
+    "projects": {
+      "campo": {
+        "title": "Campo Kumeyaay Nation",
+        "tag": "Institutional · Webflow",
+        "metric": "Government website"
+      },
+      "emika": {
+        "title": "Emika ProCleaning",
+        "tag": "Services · Landing",
+        "metric": "25+ years in business"
+      },
+      "beauty": {
+        "title": "The Beauty & Health",
+        "tag": "E-commerce · MX",
+        "metric": "Premium wellness brand"
+      },
+      "china": { "title": "China Sourcing", "tag": "Import · Webflow", "metric": "B2B lead gen" }
+    }
+  },
+  "testimonials": {
+    "eyebrow": "Testimonials · 声",
+    "titlePre": "What people",
+    "titleHighlight": "say about us",
+    "description": "Real businesses, real numbers. Here are a few of the teams we've worked with.",
+    "items": {
+      "mariana": {
+        "quote": "The Asahi team understood our business from the first call. The new landing page tripled our qualified quote requests in under a month.",
+        "name": "Mariana Esquivel",
+        "role": "Marketing Director",
+        "company": "Emika ProCleaning",
+        "jp": "信"
+      },
+      "daniel": {
+        "quote": "Flawless design, brutal performance and a crystal-clear process. First time a website has felt like an actual sales tool.",
+        "name": "Daniel Ortega",
+        "role": "Founder",
+        "company": "China Sourcing MX",
+        "jp": "速"
+      },
+      "lucia": {
+        "quote": "They took on a complicated project and delivered in record time. The automations save us at least 15 hours a week.",
+        "name": "Lucía Fernández",
+        "role": "COO",
+        "company": "The Beauty & Health",
+        "jp": "美"
+      },
+      "roberto": {
+        "quote": "Every decision was backed by data. We felt like partners, not prospects. We'd work with them again without a second thought.",
+        "name": "Roberto Gómez",
+        "role": "General Director",
+        "company": "Campo Kumeyaay Nation",
+        "jp": "誠"
+      }
+    }
+  },
+  "pricing": {
+    "eyebrow": "Packages · 料金",
+    "titlePre": "Clear",
+    "titleHighlight": "pricing",
+    "description": "Three starting points. Every proposal is scoped to fit your project's actual needs.",
+    "footnote": "Not sure which package fits? Reach out and we'll recommend the right scope, no strings attached.",
+    "currency": "USD",
+    "plans": {
+      "express": {
+        "tag": "Fast launches",
+        "jp": "速",
+        "name": "Landing Express",
+        "desc": "For one-off campaigns or a launch that can't wait.",
+        "price": "$120 – 200",
+        "cta": "Start with Landing Express",
+        "features": [
+          "1 professional landing page focused on a single offer",
+          "Custom strategic design (no templates)",
+          "Built on Webflow or Next.js",
+          "Speed optimization and mobile-first build",
+          "Baseline technical SEO (metadata, structure)",
+          "Forms connected to email or CRM",
+          "Google Analytics integration",
+          "1 round of revisions",
+          "Delivered in 3–5 business days"
+        ]
+      },
+      "growth": {
+        "tag": "Most popular",
+        "jp": "成",
+        "name": "Growth",
+        "desc": "For businesses already running ads and looking to squeeze out more results.",
+        "price": "$300 – 500",
+        "cta": "Start with Growth",
+        "features": [
+          "Everything in Landing Express",
+          "Case study, FAQ and objection-handling sections",
+          "Simple block-level A/B testing",
+          "Email marketing integration and welcome flows",
+          "Initial performance report after launch",
+          "2 rounds of revisions"
+        ]
+      },
+      "pro": {
+        "tag": "Digital products",
+        "jp": "創",
+        "name": "Pro · SaaS & Apps",
+        "desc": "Memberships, dashboards and complex projects that need serious engineering.",
+        "price": "$500 – 1,000+",
+        "cta": "Start with Pro",
+        "features": [
+          "Landing page + a key internal view (dashboard, onboarding)",
+          "Next.js development with APIs and databases",
+          "Integrations (memberships, payments, AI)",
+          "Advanced automations and CRM",
+          "Deep optimization (performance, security, Lighthouse)",
+          "2–3 rounds of revisions and launch support"
+        ]
+      }
+    }
+  },
+  "faq": {
+    "eyebrow": "FAQ · 質問",
+    "titlePre": "Frequently asked",
+    "titleHighlight": "questions",
+    "ariaLabel": "Frequently asked questions",
+    "description": "Everything people ask us before getting started. Don't see yours? Reach out and we'll answer within 24 hours.",
+    "cta": "Ask something else",
+    "items": [
+      {
+        "q": "How much does a landing page cost?",
+        "keywords": ["price", "cost", "pricing", "rate", "how much", "charge"],
+        "a": "Our packages start at $120–200 USD (Landing Express), $300–500 USD (Growth) and $500–1,000+ USD (Pro · SaaS). Every proposal is scoped to the project's actual needs. Want a recommendation?"
+      },
+      {
+        "q": "How long does a project take?",
+        "keywords": ["time", "timeline", "how long", "delivery", "deadline", "fast", "when"],
+        "a": "A Landing Express ships in 3–5 business days. Growth and Pro projects take 14 to 30 days depending on scope."
+      },
+      {
+        "q": "What technologies do you use?",
+        "keywords": ["technology", "stack", "webflow", "next", "framework", "tools"],
+        "a": "We build on Webflow for fast turnaround, and Next.js when you need APIs, dashboards or AI integrations. Automations run on n8n, Make or Zapier."
+      },
+      {
+        "q": "Do you build e-commerce sites?",
+        "keywords": ["ecommerce", "store", "shopify", "sell", "cart"],
+        "a": "Yes. We build Shopify stores and custom Next.js catalogs with optimized checkout and technical SEO."
+      },
+      {
+        "q": "Do you write the copy and content?",
+        "keywords": ["copy", "content", "writing", "copywriting"],
+        "a": "Yes, every package includes conversion-focused strategic copy. If you already have content, we'll refine it."
+      },
+      {
+        "q": "Do you build AI integrations?",
+        "keywords": ["ai", "artificial intelligence", "openai", "agents", "chatbot", "automation"],
+        "a": "Yes. We integrate OpenAI-powered agents, automations with n8n/Make, and connections to CRM, the WhatsApp API and email marketing."
+      },
+      {
+        "q": "How do we get started?",
+        "keywords": ["start", "begin", "kickoff", "process", "hire"],
+        "a": "Three steps: (1) a discovery call, (2) proposal and quote, (3) kickoff. Reach us at hola@asahi.studio or on WhatsApp."
+      },
+      {
+        "q": "Do you work with clients outside Mexico?",
+        "keywords": ["mexico", "remote", "international", "outside", "country", "location"],
+        "a": "Yes. We're based in CDMX and Guadalajara, but work 100% remote with clients across LATAM, the EU and the US."
+      },
+      {
+        "q": "Do you offer maintenance?",
+        "keywords": ["maintenance", "support", "updates", "after launch"],
+        "a": "Yes, we offer monthly maintenance plans and ongoing consulting after launch."
+      }
+    ]
+  },
+  "manifesto": {
+    "eyebrow": "Manifesto · 信念",
+    "text": "A website isn't a digital brochure. It's your best salesperson — working 24/7, measuring everything, improving every week.",
+    "italicWords": ["working", "24/7,"],
+    "body": "At Asahi we combine purposeful design, fast engineering and smart automation. We don't sell webpages. We sell growth."
+  },
+  "contact": {
+    "eyebrow": "Contact · 連絡",
+    "titleLine1": "Let's build something",
+    "titleLine2": "memorable",
+    "email": "hola@asahi.studio",
+    "whatsapp": "Message us on WhatsApp",
+    "location": "CDMX · Guadalajara · Remote",
+    "responseTime": "We reply within 24 business hours.",
+    "signatureJp": "朝日スタジオ — 2026"
+  },
+  "contactForm": {
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "nameError": "At least 2 characters",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@company.com",
+    "emailError": "Invalid email",
+    "companyLabel": "Company (optional)",
+    "companyPlaceholder": "Asahi Co.",
+    "serviceLabel": "What do you need?",
+    "serviceError": "Select a service",
+    "budgetLabel": "Budget",
+    "budgetError": "Select a range",
+    "messageLabel": "Tell us about your project",
+    "messagePlaceholder": "Goals, timeline, references...",
+    "messageError": "Tell us a bit more",
+    "submit": "Send message",
+    "submitting": "Sending...",
+    "submitted": "✓ Sent",
+    "successToast": "Got it! We'll get back to you within 24h.",
+    "errorToast": "Something went wrong sending your message. Please try again.",
+    "budgets": ["< $200 USD", "$200 – $500 USD", "$500 – $1,000 USD", "$1,000+ USD"],
+    "services": ["Landing Express", "Growth (Landing + A/B)", "Pro (SaaS/App)", "Automation / AI"]
+  },
+  "footer": {
+    "tagline": "A web design and development studio in Mexico. Landing pages, e-commerce and AI automations that turn visits into customers.",
+    "location": "CDMX · Guadalajara · Remote",
+    "email": "hola@asahi.studio",
+    "navLabel": "Navigation",
+    "navLabelJp": "目次",
+    "servicesLabel": "Services",
+    "servicesLabelJp": "提供",
+    "servicesList": [
+      "High-conversion landing pages",
+      "E-commerce & websites",
+      "Automation & AI",
+      "Custom-built solutions"
+    ],
+    "cta": "Get a quote",
+    "ariaFooter": "Footer",
+    "ariaSitemap": "Sitemap",
+    "backToTop": "Back to top",
+    "backToTopAria": "Back to top",
+    "copyright": "Asahi Studio — Design + Code + AI · Made in Mexico"
+  },
+  "chatWidget": {
+    "openLabel": "Open chat",
+    "closeLabel": "Close chat",
+    "title": "Asahi · Assistant",
+    "status": "Online · replies in seconds",
+    "greeting": "こんにちは. I'm the Asahi Studio assistant. Ask me anything about our services, packages or timelines.",
+    "placeholder": "Type your question…",
+    "sendAria": "Send",
+    "fallback": "Good question. That one's best answered 1-on-1: write to us at hola@asahi.studio or on WhatsApp and we'll reply within 24h.",
+    "disclaimer": "Automated replies · For anything complex: hola@asahi.studio"
+  }
+}

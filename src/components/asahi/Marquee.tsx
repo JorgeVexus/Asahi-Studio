@@ -1,7 +1,11 @@
+"use client";
+
 import { motion, useScroll, useTransform, useVelocity, useSpring } from "framer-motion";
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 
 export function Marquee() {
+  const t = useTranslations("marquee");
   const ref = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const velocity = useVelocity(scrollY);
@@ -27,7 +31,7 @@ export function Marquee() {
     <div
       ref={ref}
       className="marquee-pausable relative overflow-hidden border-y border-foreground/15 bg-foreground py-6 text-background"
-      aria-label="Tecnologías: Webflow, Next.js, React, Framer, Shopify, OpenAI, n8n, Make, Supabase, Tailwind"
+      aria-label={t("aria")}
     >
       <motion.div
         style={{ skewX: skew, x: useTransform(speed, (v) => `${v * -50}px`) }}

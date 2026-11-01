@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Toaster } from "sonner";
 import { Nav } from "@/components/asahi/Nav";
 import { Hero } from "@/components/asahi/Hero";
@@ -16,13 +16,30 @@ import { Cursor } from "@/components/asahi/Cursor";
 import { ScrollProgress } from "@/components/asahi/ScrollProgress";
 import { ChatWidget } from "@/components/asahi/ChatWidget";
 
-export const Route = createFileRoute("/")({
-  component: Index,
-});
+type FaqEntry = { q: string; a: string };
 
-function Index() {
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const t = await getTranslations({ locale, namespace: "faq" });
+  const faqs = t.raw("items") as FaqEntry[];
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <ScrollProgress />
       <Cursor />
       <Nav />

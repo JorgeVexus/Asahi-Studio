@@ -1,50 +1,43 @@
+"use client";
+
 import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import campo from "@/assets/work-campo.webp";
 import emika from "@/assets/work-emika.webp";
 import beauty from "@/assets/work-beautyhealth.webp";
 import china from "@/assets/work-chinasourcing.webp";
 
-const projects = [
-  {
+const PROJECT_KEYS = ["campo", "emika", "beauty", "china"] as const;
+const PROJECT_META = {
+  campo: {
     n: "01",
-    title: "Campo Kumeyaay Nation",
-    tag: "Institucional · Webflow",
-    metric: "Sitio gubernamental",
     url: "https://campo-nsn.gov/",
     image: campo,
     hue: "oklch(0.55 0.14 140)",
   },
-  {
+  emika: {
     n: "02",
-    title: "Emika ProCleaning",
-    tag: "Servicios · Landing",
-    metric: "+25 años de trayectoria",
     url: "https://www.emika-procleaning.com/",
     image: emika,
     hue: "oklch(0.6 0.18 250)",
   },
-  {
+  beauty: {
     n: "03",
-    title: "The Beauty & Health",
-    tag: "E-commerce · MX",
-    metric: "Marca premium wellness",
     url: "https://thebeautyhealth.mx/",
     image: beauty,
     hue: "oklch(0.7 0.14 60)",
   },
-  {
+  china: {
     n: "04",
-    title: "China Sourcing",
-    tag: "Importación · Webflow",
-    metric: "Lead-gen B2B",
     url: "https://china-sourcing.webflow.io/",
     image: china,
     hue: "oklch(0.62 0.235 27)",
   },
-];
+} as const;
 
 export function Work() {
+  const t = useTranslations("work");
   const [active, setActive] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -52,6 +45,14 @@ export function Work() {
   const my = useMotionValue(0);
   const x = useSpring(mx, { stiffness: 250, damping: 28, mass: 0.4 });
   const y = useSpring(my, { stiffness: 250, damping: 28, mass: 0.4 });
+
+  const projects = PROJECT_KEYS.map((key) => ({
+    key,
+    title: t(`projects.${key}.title`),
+    tag: t(`projects.${key}.tag`),
+    metric: t(`projects.${key}.metric`),
+    ...PROJECT_META[key],
+  }));
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -69,15 +70,16 @@ export function Work() {
         <div className="flex items-end justify-between">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-background/60">
-              <span className="text-primary">●</span> Trabajo destacado · 仕事
+              <span className="text-primary">●</span> {t("eyebrow")}
             </p>
             <h2 className="mt-4 font-display text-5xl font-semibold leading-[0.95] md:text-7xl text-balance">
-              Resultados <span className="italic text-primary">reales</span>.
+              {t("titlePre")} <span className="italic text-primary">{t("titleHighlight")}</span>.
             </h2>
           </div>
           <p className="hidden max-w-xs font-mono text-xs uppercase tracking-widest text-background/50 md:block">
-            Pasa el cursor / toca →<br />
-            Ver vista previa en vivo
+            {t("hint")}
+            <br />
+            {t("hintSub")}
           </p>
         </div>
 
@@ -101,8 +103,8 @@ export function Work() {
                 className="pointer-events-none absolute z-30 hidden aspect-[16/10] w-[42vw] max-w-[640px] overflow-hidden border border-background/20 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] md:block"
               >
                 <img
-                  src={projects[active].image}
-                  alt={`Captura del sitio web de ${projects[active].title}, proyecto de Asahi Studio`}
+                  src={projects[active].image.src}
+                  alt={`${t("altPrefix")} ${projects[active].title} ${t("altSuffix")}`}
                   loading="lazy"
                   decoding="async"
                   className="h-full w-full object-cover object-top"
@@ -118,7 +120,7 @@ export function Work() {
                     {projects[active].tag}
                   </span>
                   <span className="font-mono text-[11px] uppercase tracking-widest text-primary">
-                    Visitar ↗
+                    {t("visit")}
                   </span>
                 </div>
               </motion.div>
@@ -161,8 +163,8 @@ export function Work() {
                     className="relative mb-5 aspect-[16/10] w-full overflow-hidden border border-background/15 md:hidden"
                   >
                     <img
-                      src={p.image}
-                      alt={`Captura del sitio web de ${p.title}, proyecto de Asahi Studio`}
+                      src={p.image.src}
+                      alt={`${t("altPrefix")} ${p.title} ${t("altSuffix")}`}
                       loading="lazy"
                       decoding="async"
                       className="h-full w-full object-cover object-top"
@@ -178,7 +180,7 @@ export function Work() {
                         {p.tag}
                       </span>
                       <span className="font-mono text-[10px] uppercase tracking-widest text-primary">
-                        Visitar ↗
+                        {t("visit")}
                       </span>
                     </div>
                   </motion.div>

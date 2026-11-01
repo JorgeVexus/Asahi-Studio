@@ -1,40 +1,30 @@
+"use client";
+
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
-import { FAQS, type Faq } from "./faq-data";
+import { useTranslations } from "next-intl";
+import { useFaqs, type Faq } from "./use-faqs";
 
 type Msg = { role: "bot" | "user"; text: string; suggestions?: string[] };
 
-const INITIAL_SUGGESTIONS = FAQS.slice(0, 4).map((f) => f.q);
+const DIACRITICS_RE = new RegExp("[̀-ͯ]", "g");
 
 function normalize(s: string) {
-  return s
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
-
-function findAnswer(input: string): string {
-  const n = normalize(input);
-  const exact = FAQS.find((f) => normalize(f.q) === n);
-  if (exact) return exact.a;
-  let best: { faq: Faq; score: number } | null = null;
-  for (const f of FAQS) {
-    const score = f.keywords.reduce((acc, k) => acc + (n.includes(k) ? 1 : 0), 0);
-    if (score > 0 && (!best || score > best.score)) best = { faq: f, score };
-  }
-  if (best) return best.faq.a;
-  return "Buena pregunta. Esa la respondemos mejor 1 a 1: escríbenos a hola@asahi.studio o por WhatsApp y te contestamos en menos de 24h.";
+  return s.toLowerCase().normalize("NFD").replace(DIACRITICS_RE, "");
 }
 
 export function ChatWidget() {
+  const t = useTranslations("chatWidget");
+  const faqs = useFaqs();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
+  const initialSuggestions = faqs.slice(0, 4).map((f) => f.q);
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "bot",
-      text: "こんにちは. Soy el asistente de Asahi Studio. Pregúntame lo que quieras sobre nuestros servicios, paquetes o tiempos.",
-      suggestions: INITIAL_SUGGESTIONS,
+      text: t("greeting"),
+      suggestions: initialSuggestions,
     },
   ]);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -50,11 +40,25 @@ export function ChatWidget() {
     if (open) inputRef.current?.focus();
   }, [open]);
 
+  const findAnswer = (input: string): string => {
+    const n = normalize(input);
+    const exact = faqs.find((f) => normalize(f.q) === n);
+    if (exact) return exact.a;
+    let best: { faq: Faq; score: number } | null = null;
+    for (const f of faqs) {
+      const score = f.keywords.reduce((acc, k) => acc + (n.includes(k) ? 1 : 0), 0);
+      if (score > 0 && (!best || score > best.score)) best = { faq: f, score };
+    }
+    if (best) return best.faq.a;
+    return t("fallback");
+  };
+
   const send = (text: string) => {
     const clean = text.trim();
     if (!clean) return;
     const answer = findAnswer(clean);
-    const remaining = FAQS.filter((f) => normalize(f.q) !== normalize(clean))
+    const remaining = faqs
+      .filter((f) => normalize(f.q) !== normalize(clean))
       .slice(0, 3)
       .map((f) => f.q);
     setMessages((m) => [
@@ -68,7 +72,7 @@ export function ChatWidget() {
   return (
     <>
       <motion.button
-        aria-label={open ? "Cerrar chat" : "Abrir chat"}
+        aria-label={open ? t("closeLabel") : t("openLabel")}
         onClick={() => setOpen((o) => !o)}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -124,9 +128,9 @@ export function ChatWidget() {
                 <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
               </span>
               <div className="flex-1">
-                <p className="font-display text-base leading-tight">Asahi · Asistente</p>
+                <p className="font-display text-base leading-tight">{t("title")}</p>
                 <p className="font-mono text-[10px] uppercase tracking-widest text-background/60">
-                  En línea · responde en segundos
+                  {t("status")}
                 </p>
               </div>
               <span className="font-jp text-lg text-primary">朝</span>
@@ -181,19 +185,19 @@ export function ChatWidget() {
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Escribe tu pregunta…"
+                placeholder={t("placeholder")}
                 className="flex-1 bg-transparent px-2 py-2 text-sm outline-none placeholder:text-muted-foreground"
               />
               <button
                 type="submit"
-                aria-label="Enviar"
+                aria-label={t("sendAria")}
                 className="flex h-9 w-9 items-center justify-center bg-primary text-primary-foreground transition hover:bg-foreground"
               >
                 <Send className="h-4 w-4" />
               </button>
             </form>
             <p className="border-t border-foreground/10 bg-background px-4 py-2 text-center font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
-              Respuestas automáticas · Para casos complejos: hola@asahi.studio
+              {t("disclaimer")}
             </p>
           </motion.div>
         )}
