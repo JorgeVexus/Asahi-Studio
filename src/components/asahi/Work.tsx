@@ -3,40 +3,9 @@
 import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import campo from "@/assets/work-campo.webp";
-import emika from "@/assets/work-emika.webp";
-import beauty from "@/assets/work-beautyhealth.webp";
-import china from "@/assets/work-chinasourcing.webp";
+import type { PublicProject } from "@/lib/content/types";
 
-const PROJECT_KEYS = ["campo", "emika", "beauty", "china"] as const;
-const PROJECT_META = {
-  campo: {
-    n: "01",
-    url: "https://campo-nsn.gov/",
-    image: campo,
-    hue: "oklch(0.55 0.14 140)",
-  },
-  emika: {
-    n: "02",
-    url: "https://www.emika-procleaning.com/",
-    image: emika,
-    hue: "oklch(0.6 0.18 250)",
-  },
-  beauty: {
-    n: "03",
-    url: "https://thebeautyhealth.mx/",
-    image: beauty,
-    hue: "oklch(0.7 0.14 60)",
-  },
-  china: {
-    n: "04",
-    url: "https://china-sourcing.webflow.io/",
-    image: china,
-    hue: "oklch(0.62 0.235 27)",
-  },
-} as const;
-
-export function Work() {
+export function Work({ projects: items }: { projects: PublicProject[] }) {
   const t = useTranslations("work");
   const [active, setActive] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -46,13 +15,7 @@ export function Work() {
   const x = useSpring(mx, { stiffness: 250, damping: 28, mass: 0.4 });
   const y = useSpring(my, { stiffness: 250, damping: 28, mass: 0.4 });
 
-  const projects = PROJECT_KEYS.map((key) => ({
-    key,
-    title: t(`projects.${key}.title`),
-    tag: t(`projects.${key}.tag`),
-    metric: t(`projects.${key}.metric`),
-    ...PROJECT_META[key],
-  }));
+  const projects = items.map((p, i) => ({ ...p, n: String(i + 1).padStart(2, "0") }));
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -103,7 +66,7 @@ export function Work() {
                 className="pointer-events-none absolute z-30 hidden aspect-[16/10] w-[42vw] max-w-[640px] overflow-hidden border border-background/20 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] md:block"
               >
                 <img
-                  src={projects[active].image.src}
+                  src={projects[active].image}
                   alt={`${t("altPrefix")} ${projects[active].title} ${t("altSuffix")}`}
                   loading="lazy"
                   decoding="async"
@@ -130,7 +93,7 @@ export function Work() {
           {/* index list */}
           <ul className="relative z-10 border-t border-background/15">
             {projects.map((p, i) => (
-              <li key={p.url} className="border-b border-background/15">
+              <li key={p.key} className="border-b border-background/15">
                 <motion.a
                   href={p.url}
                   target="_blank"
@@ -163,7 +126,7 @@ export function Work() {
                     className="relative mb-5 aspect-[16/10] w-full overflow-hidden border border-background/15 md:hidden"
                   >
                     <img
-                      src={p.image.src}
+                      src={p.image}
                       alt={`${t("altPrefix")} ${p.title} ${t("altSuffix")}`}
                       loading="lazy"
                       decoding="async"

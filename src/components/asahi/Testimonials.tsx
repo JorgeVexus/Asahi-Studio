@@ -2,20 +2,10 @@
 
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
+import type { PublicTestimonial } from "@/lib/content/types";
 
-const TESTIMONIAL_KEYS = ["mariana", "daniel", "lucia", "roberto"] as const;
-
-export function Testimonials() {
+export function Testimonials({ items: testimonials }: { items: PublicTestimonial[] }) {
   const t = useTranslations("testimonials");
-
-  const testimonials = TESTIMONIAL_KEYS.map((key) => ({
-    key,
-    quote: t(`items.${key}.quote`),
-    name: t(`items.${key}.name`),
-    role: t(`items.${key}.role`),
-    company: t(`items.${key}.company`),
-    jp: t(`items.${key}.jp`),
-  }));
 
   return (
     <section

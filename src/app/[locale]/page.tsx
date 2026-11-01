@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Toaster } from "sonner";
+import { getPublicProjects, getPublicTestimonials } from "@/lib/content/queries";
 import { Nav } from "@/components/asahi/Nav";
 import { Hero } from "@/components/asahi/Hero";
 import { Marquee } from "@/components/asahi/Marquee";
@@ -16,11 +17,19 @@ import { Cursor } from "@/components/asahi/Cursor";
 import { ScrollProgress } from "@/components/asahi/ScrollProgress";
 import { ChatWidget } from "@/components/asahi/ChatWidget";
 
+export const revalidate = 60;
+
 type FaqEntry = { q: string; a: string };
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const lang = locale === "en" ? "en" : "es";
+  const [projects, testimonials] = await Promise.all([
+    getPublicProjects(lang),
+    getPublicTestimonials(lang),
+  ]);
 
   const t = await getTranslations({ locale, namespace: "faq" });
   const faqs = t.raw("items") as FaqEntry[];
@@ -47,8 +56,8 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <Marquee />
       <Services />
       <Process />
-      <Work />
-      <Testimonials />
+      <Work projects={projects} />
+      <Testimonials items={testimonials} />
       <Pricing />
       <Faq />
       <Manifesto />
