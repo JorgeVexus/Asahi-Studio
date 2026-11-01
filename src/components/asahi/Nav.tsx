@@ -1,19 +1,16 @@
+"use client";
+
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { usePathname, useRouter } from "@/i18n/navigation";
 
-const LINKS = [
-  { label: "Servicios", jp: "提供", href: "#services", id: "services" },
-  { label: "Proceso", jp: "工程", href: "#process", id: "process" },
-  { label: "Trabajo", jp: "仕事", href: "#work", id: "work" },
-  { label: "Precios", jp: "料金", href: "#pricing", id: "pricing" },
-  { label: "FAQ", jp: "質問", href: "#faq", id: "faq" },
-  { label: "Contacto", jp: "連絡", href: "#contact", id: "contact" },
-];
+const LINK_IDS = ["services", "process", "work", "pricing", "faq", "contact"] as const;
 
 function useActiveSection() {
   const [active, setActive] = useState<string | null>(null);
   useEffect(() => {
-    const sections = LINKS.map((l) => document.getElementById(l.id)).filter(
+    const sections = LINK_IDS.map((id) => document.getElementById(id)).filter(
       Boolean,
     ) as HTMLElement[];
     const observer = new IntersectionObserver(
@@ -31,10 +28,21 @@ function useActiveSection() {
 }
 
 export function Nav() {
+  const t = useTranslations("nav");
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
   const active = useActiveSection();
+
+  const links = LINK_IDS.map((id) => ({
+    id,
+    href: `#${id}`,
+    label: t(`links.${id}.label`),
+    jp: t(`links.${id}.jp`),
+  }));
 
   useMotionValueEvent(scrollY, "change", (y) => {
     const prev = scrollY.getPrevious() ?? 0;
@@ -55,6 +63,10 @@ export function Nav() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  const switchLocale = (nextLocale: string) => {
+    router.replace(pathname, { locale: nextLocale });
+  };
+
   return (
     <>
       <motion.header
@@ -66,7 +78,7 @@ export function Nav() {
           <a
             href="#top"
             className="no-tap-highlight flex items-center gap-2.5"
-            aria-label="Asahi Studio — inicio"
+            aria-label={t("ariaHome")}
           >
             <span className="relative inline-block h-3.5 w-3.5 rounded-full bg-primary" />
             <span className="font-display text-xl tracking-tight">
@@ -75,8 +87,8 @@ export function Nav() {
             <span className="font-jp text-xs text-muted-foreground hidden sm:inline">朝日</span>
           </a>
 
-          <nav className="hidden items-center gap-7 md:flex" aria-label="Navegación principal">
-            {LINKS.map(({ label, href, id }) => (
+          <nav className="hidden items-center gap-7 md:flex" aria-label={t("ariaMain")}>
+            {links.map(({ label, href, id }) => (
               <a
                 key={href}
                 href={href}
@@ -95,18 +107,40 @@ export function Nav() {
           </nav>
 
           <div className="flex items-center gap-3">
+            <div
+              className="hidden items-center gap-1 font-mono text-xs uppercase tracking-widest text-foreground/60 sm:flex"
+              role="group"
+              aria-label={t("language")}
+            >
+              <button
+                onClick={() => switchLocale("es")}
+                className={`px-1.5 py-0.5 transition ${locale === "es" ? "text-primary" : "hover:text-foreground"}`}
+                aria-pressed={locale === "es"}
+              >
+                {t("langEs")}
+              </button>
+              <span className="text-foreground/30">/</span>
+              <button
+                onClick={() => switchLocale("en")}
+                className={`px-1.5 py-0.5 transition ${locale === "en" ? "text-primary" : "hover:text-foreground"}`}
+                aria-pressed={locale === "en"}
+              >
+                {t("langEn")}
+              </button>
+            </div>
+
             <a
               href="#contact"
               className="group hidden items-center gap-2 border border-foreground bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:bg-primary hover:border-primary sm:inline-flex"
             >
-              Empezar proyecto
+              {t("ctaDesktop")}
               <span className="transition group-hover:translate-x-0.5">→</span>
             </a>
 
             {/* Mobile hamburger */}
             <button
               onClick={() => setOpen(true)}
-              aria-label="Abrir menú"
+              aria-label={t("openMenu")}
               aria-expanded={open}
               className="no-tap-highlight flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden"
             >
@@ -146,7 +180,7 @@ export function Nav() {
               </span>
               <button
                 onClick={() => setOpen(false)}
-                aria-label="Cerrar menú"
+                aria-label={t("closeMenu")}
                 className="no-tap-highlight relative flex h-10 w-10 items-center justify-center"
               >
                 <span className="absolute block h-px w-6 rotate-45 bg-background" />
@@ -155,11 +189,28 @@ export function Nav() {
             </div>
 
             <div className="relative flex flex-1 flex-col justify-center px-8">
-              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-background/50">
-                Menú · <span className="font-jp">目次</span>
-              </p>
-              <nav className="mt-6 flex flex-col" aria-label="Navegación móvil">
-                {LINKS.map(({ label, jp, href }, i) => (
+              <div className="flex items-center gap-3">
+                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-background/50">
+                  {t("menuLabel")} · <span className="font-jp">{t("menuLabelJp")}</span>
+                </p>
+                <div className="ml-auto flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-background/60">
+                  <button
+                    onClick={() => switchLocale("es")}
+                    className={`px-1.5 py-0.5 transition ${locale === "es" ? "text-primary" : "hover:text-background"}`}
+                  >
+                    {t("langEs")}
+                  </button>
+                  <span className="text-background/30">/</span>
+                  <button
+                    onClick={() => switchLocale("en")}
+                    className={`px-1.5 py-0.5 transition ${locale === "en" ? "text-primary" : "hover:text-background"}`}
+                  >
+                    {t("langEn")}
+                  </button>
+                </div>
+              </div>
+              <nav className="mt-6 flex flex-col" aria-label={t("ariaMobile")}>
+                {links.map(({ label, jp, href }, i) => (
                   <motion.a
                     key={href}
                     href={href}
@@ -186,7 +237,7 @@ export function Nav() {
                 transition={{ delay: 0.55, duration: 0.5 }}
                 className="group mt-10 inline-flex items-center justify-between bg-primary px-6 py-4 text-base font-medium text-primary-foreground"
               >
-                Cotiza tu proyecto
+                {t("ctaMobile")}
                 <span className="transition group-hover:translate-x-1">→</span>
               </motion.a>
             </div>
@@ -198,9 +249,9 @@ export function Nav() {
               className="relative flex items-center justify-between px-8 pb-8 font-mono text-[10px] uppercase tracking-[0.25em] text-background/50"
             >
               <a href="mailto:hola@asahi.studio" className="hover:text-primary">
-                hola@asahi.studio
+                {t("email")}
               </a>
-              <span className="font-jp">朝日スタジオ</span>
+              <span className="font-jp">{t("brandJp")}</span>
             </motion.div>
           </motion.div>
         )}

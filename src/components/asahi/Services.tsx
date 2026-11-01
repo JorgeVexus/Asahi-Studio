@@ -1,38 +1,21 @@
+"use client";
+
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, type MouseEvent } from "react";
+import { useTranslations } from "next-intl";
 
-const services = [
-  {
-    n: "01",
-    jp: "着陸",
-    title: "Landing pages de alta conversión",
-    body: "Diseño enfocado en ventas, copy estratégico y CRO. Cada sección justifica su existencia.",
-    points: ["Wireframe estratégico", "Copy persuasivo", "A/B testing ready"],
-  },
-  {
-    n: "02",
-    jp: "商店",
-    title: "E-commerce & Websites completos",
-    body: "Tiendas en Shopify y sitios multi-página en Next.js. Performance, SEO y experiencia móvil impecable.",
-    points: ["Shopify / Next.js", "Catálogo escalable", "Checkout optimizado"],
-  },
-  {
-    n: "03",
-    jp: "自動化",
-    title: "Automatizaciones & integración IA",
-    body: "Tu sitio conectado a CRM, WhatsApp, email y agentes IA. Captura, califica y responde en automático.",
-    points: ["n8n / Make / Zapier", "Agentes con OpenAI", "CRM + WhatsApp API"],
-  },
-  {
-    n: "04",
-    jp: "特注",
-    title: "Soluciones a medida",
-    body: "Cero plantillas genéricas. Cada proyecto se diseña alrededor de tu negocio, tu cliente y tu objetivo.",
-    points: ["Branding digital", "Dashboards internos", "Consultoría continua"],
-  },
-];
+const SERVICE_KEYS = ["landing", "ecommerce", "automation", "custom"] as const;
+const SERVICE_NUMBERS = ["01", "02", "03", "04"];
 
-function ServiceCard({ s, idx }: { s: (typeof services)[number]; idx: number }) {
+type ServiceData = {
+  n: string;
+  jp: string;
+  title: string;
+  body: string;
+  points: string[];
+};
+
+function ServiceCard({ s, idx }: { s: ServiceData; idx: number }) {
   const ref = useRef<HTMLElement>(null);
   const rx = useMotionValue(0);
   const ry = useMotionValue(0);
@@ -95,22 +78,29 @@ function ServiceCard({ s, idx }: { s: (typeof services)[number]; idx: number }) 
 }
 
 export function Services() {
+  const t = useTranslations("services");
+
+  const services: ServiceData[] = SERVICE_KEYS.map((key, i) => ({
+    n: SERVICE_NUMBERS[i],
+    jp: t(`items.${key}.jp`),
+    title: t(`items.${key}.title`),
+    body: t(`items.${key}.body`),
+    points: t.raw(`items.${key}.points`) as string[],
+  }));
+
   return (
     <section id="services" className="relative border-t border-foreground/15">
       <div className="mx-auto max-w-[1400px] px-6 py-24 md:px-10 md:py-32">
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-              <span className="text-primary">●</span> Servicios · 提供
+              <span className="text-primary">●</span> {t("eyebrow")}
             </p>
             <h2 className="mt-4 max-w-3xl font-display text-5xl font-semibold leading-[0.95] tracking-tight md:text-7xl text-balance">
-              Lo que <span className="italic text-primary">hacemos</span>.
+              {t("titlePre")} <span className="italic text-primary">{t("titleHighlight")}</span>.
             </h2>
           </div>
-          <p className="max-w-sm text-foreground/70">
-            Cuatro disciplinas. Una obsesión: que tu sitio sea la mejor herramienta de venta de tu
-            negocio.
-          </p>
+          <p className="max-w-sm text-foreground/70">{t("description")}</p>
         </div>
 
         <div className="mt-16 grid gap-px overflow-hidden border border-foreground/15 bg-foreground/15 md:grid-cols-2">

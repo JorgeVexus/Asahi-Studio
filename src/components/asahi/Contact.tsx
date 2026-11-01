@@ -1,7 +1,12 @@
+"use client";
+
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { ContactForm } from "./ContactForm";
 
 export function Contact() {
+  const t = useTranslations("contact");
+
   return (
     <section
       id="contact"
@@ -15,12 +20,12 @@ export function Contact() {
       <div className="pointer-events-none absolute inset-0 grain" />
       <div className="relative mx-auto max-w-[1400px] px-6 py-28 md:px-10 md:py-40">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-background/60">
-          <span className="text-primary">●</span> Contacto · 連絡
+          <span className="text-primary">●</span> {t("eyebrow")}
         </p>
         <h2 className="mt-6 max-w-4xl font-display text-6xl font-semibold leading-[0.9] tracking-tight md:text-[9rem] text-balance">
-          Hagamos algo
+          {t("titleLine1")}
           <br />
-          <span className="italic">memorable</span>.
+          <span className="italic">{t("titleLine2")}</span>.
         </h2>
 
         <div className="mt-20 grid gap-16 md:grid-cols-12">
@@ -30,7 +35,7 @@ export function Contact() {
                 href="mailto:hola@asahi.studio"
                 className="group flex items-center justify-between border-b border-background/30 pb-3 text-xl transition hover:border-primary md:text-2xl"
               >
-                hola@asahi.studio
+                {t("email")}
                 <span className="transition group-hover:translate-x-1 group-hover:text-primary">
                   →
                 </span>
@@ -39,18 +44,16 @@ export function Contact() {
                 href="https://wa.me/52"
                 className="group flex items-center justify-between border-b border-background/30 pb-3 text-xl transition hover:border-primary md:text-2xl"
               >
-                WhatsApp directo
+                {t("whatsapp")}
                 <span className="transition group-hover:translate-x-1 group-hover:text-primary">
                   →
                 </span>
               </a>
             </div>
             <div className="space-y-2 text-background/70">
-              <p className="font-mono text-xs uppercase tracking-widest">
-                CDMX · Guadalajara · Remoto
-              </p>
-              <p className="text-sm">Respondemos en menos de 24 horas hábiles.</p>
-              <p className="font-jp text-sm text-primary pt-4">朝日スタジオ — 2026</p>
+              <p className="font-mono text-xs uppercase tracking-widest">{t("location")}</p>
+              <p className="text-sm">{t("responseTime")}</p>
+              <p className="font-jp text-sm text-primary pt-4">{t("signatureJp")}</p>
             </div>
           </div>
 

@@ -1,88 +1,50 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
+import { useTranslations } from "next-intl";
 
-const plans = [
-  {
-    tag: "Lanzamientos rápidos",
-    jp: "速",
-    name: "Landing Express",
-    desc: "Para campañas puntuales o un lanzamiento que no puede esperar.",
-    price: "$120 – 200",
-    currency: "USD",
-    cta: "Empezar con Landing Express",
-    featured: false,
-    features: [
-      "1 landing page profesional enfocada en una oferta",
-      "Diseño estratégico personalizado (sin plantillas)",
-      "Desarrollo en Webflow o Next.js",
-      "Optimización de velocidad y mobile-first",
-      "SEO técnico base (metadatos, estructura)",
-      "Formularios conectados a email o CRM",
-      "Integración con Google Analytics",
-      "1 ronda de revisiones",
-      "Entrega en 3–5 días hábiles",
-    ],
-  },
-  {
-    tag: "Más popular",
-    jp: "成",
-    name: "Growth",
-    desc: "Para negocios que ya invierten en ads y necesitan exprimir resultados.",
-    price: "$300 – 500",
-    currency: "USD",
-    cta: "Empezar con Growth",
-    featured: true,
-    features: [
-      "Todo lo del paquete Landing Express",
-      "Secciones de casos de éxito, FAQs y objeciones",
-      "Test A/B sencillo por bloques",
-      "Integración con email marketing y flujos de bienvenida",
-      "Reporte inicial de performance tras el lanzamiento",
-      "2 rondas de revisiones",
-    ],
-  },
-  {
-    tag: "Productos digitales",
-    jp: "創",
-    name: "Pro · SaaS & Apps",
-    desc: "Membresías, dashboards y proyectos complejos que necesitan ingeniería seria.",
-    price: "$500 – 1,000+",
-    currency: "USD",
-    cta: "Empezar con Pro",
-    featured: false,
-    features: [
-      "Landing + vista interna clave (dashboard, onboarding)",
-      "Desarrollo en Next.js con APIs y bases de datos",
-      "Integraciones (membresías, pagos, IA)",
-      "Automatizaciones avanzadas y CRM",
-      "Optimización profunda (performance, seguridad, Lighthouse)",
-      "2–3 rondas de revisiones y acompañamiento al lanzamiento",
-    ],
-  },
-];
+const PLAN_KEYS = ["express", "growth", "pro"] as const;
+const FEATURED: Record<(typeof PLAN_KEYS)[number], boolean> = {
+  express: false,
+  growth: true,
+  pro: false,
+};
 
 export function Pricing() {
+  const t = useTranslations("pricing");
+
+  const plans = PLAN_KEYS.map((key) => ({
+    key,
+    tag: t(`plans.${key}.tag`),
+    jp: t(`plans.${key}.jp`),
+    name: t(`plans.${key}.name`),
+    desc: t(`plans.${key}.desc`),
+    price: t(`plans.${key}.price`),
+    cta: t(`plans.${key}.cta`),
+    featured: FEATURED[key],
+    features: t.raw(`plans.${key}.features`) as string[],
+  }));
+
   return (
     <section id="pricing" className="relative border-t border-foreground/15">
       <div className="mx-auto max-w-[1400px] px-6 py-24 md:px-10 md:py-32">
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-              <span className="text-primary">●</span> Paquetes · 料金
+              <span className="text-primary">●</span> {t("eyebrow")}
             </p>
             <h2 className="mt-4 max-w-3xl font-display text-5xl font-semibold leading-[0.95] tracking-tight md:text-7xl text-balance">
-              Precios <span className="italic text-primary">claros</span>.
+              {t("titlePre")} <span className="italic text-primary">{t("titleHighlight")}</span>.
             </h2>
           </div>
-          <p className="max-w-sm text-foreground/70">
-            Tres puntos de partida. Cada propuesta se ajusta al alcance real de tu proyecto.
-          </p>
+          <p className="max-w-sm text-foreground/70">{t("description")}</p>
         </div>
 
         <div className="mt-16 grid gap-px overflow-hidden border border-foreground/15 bg-foreground/15 md:grid-cols-3">
           {plans.map((p, i) => (
             <motion.article
-              key={p.name}
+              key={p.key}
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
@@ -120,7 +82,7 @@ export function Pricing() {
                 <span
                   className={`font-mono text-xs ${p.featured ? "text-background/60" : "text-muted-foreground"}`}
                 >
-                  {p.currency}
+                  {t("currency")}
                 </span>
               </div>
 
@@ -152,10 +114,7 @@ export function Pricing() {
           ))}
         </div>
 
-        <p className="mt-8 max-w-2xl text-sm text-muted-foreground">
-          ¿No estás seguro qué paquete necesitas? Escríbenos y te recomendamos el alcance ideal sin
-          compromiso.
-        </p>
+        <p className="mt-8 max-w-2xl text-sm text-muted-foreground">{t("footnote")}</p>
       </div>
     </section>
   );

@@ -1,21 +1,10 @@
+"use client";
+
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Magnetic } from "./Magnetic";
 
-const NAV = [
-  ["Servicios", "#services"],
-  ["Proceso", "#process"],
-  ["Trabajo", "#work"],
-  ["Precios", "#pricing"],
-  ["FAQ", "#faq"],
-  ["Contacto", "#contact"],
-];
-
-const SERVICES = [
-  "Landing pages de alta conversión",
-  "E-commerce & websites",
-  "Automatizaciones & IA",
-  "Soluciones a medida",
-];
+const NAV_IDS = ["services", "process", "work", "pricing", "faq", "contact"] as const;
 
 /** Seigaiha (青海波) wave pattern divider. */
 function Seigaiha() {
@@ -61,12 +50,15 @@ function Seigaiha() {
 }
 
 export function Footer() {
+  const t = useTranslations("footer");
+  const nav = useTranslations("nav");
   const year = new Date().getFullYear();
+  const servicesList = t.raw("servicesList") as string[];
 
   return (
     <footer
       className="relative border-t border-foreground/15 bg-background"
-      aria-label="Pie de página"
+      aria-label={t("ariaFooter")}
     >
       <Seigaiha />
 
@@ -74,37 +66,34 @@ export function Footer() {
         <div className="grid gap-12 md:grid-cols-12">
           {/* Brand */}
           <div className="md:col-span-5">
-            <a href="#top" className="flex items-center gap-2.5" aria-label="Volver arriba">
+            <a href="#top" className="flex items-center gap-2.5" aria-label={t("backToTopAria")}>
               <span className="h-3 w-3 rounded-full bg-primary" />
               <span className="font-display text-2xl">Asahi Studio</span>
               <span className="font-jp text-sm text-muted-foreground">朝日</span>
             </a>
-            <p className="mt-4 max-w-sm text-sm text-foreground/60">
-              Estudio de diseño y desarrollo web en México. Landing pages, e-commerce y
-              automatizaciones con IA que convierten visitas en clientes.
-            </p>
+            <p className="mt-4 max-w-sm text-sm text-foreground/60">{t("tagline")}</p>
             <address className="mt-6 space-y-1 font-mono text-[11px] uppercase not-italic tracking-widest text-muted-foreground">
-              <p>CDMX · Guadalajara · Remoto</p>
+              <p>{t("location")}</p>
               <a href="mailto:hola@asahi.studio" className="block transition hover:text-primary">
-                hola@asahi.studio
+                {t("email")}
               </a>
             </address>
           </div>
 
           {/* Nav columns */}
-          <nav className="md:col-span-3" aria-label="Mapa del sitio">
+          <nav className="md:col-span-3" aria-label={t("ariaSitemap")}>
             <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-              Navegación · <span className="font-jp">目次</span>
+              {t("navLabel")} · <span className="font-jp">{t("navLabelJp")}</span>
             </p>
             <ul className="mt-4 space-y-2.5">
-              {NAV.map(([label, href]) => (
-                <li key={href}>
+              {NAV_IDS.map((id) => (
+                <li key={id}>
                   <a
-                    href={href}
+                    href={`#${id}`}
                     className="group inline-flex items-center gap-2 text-sm text-foreground/70 transition hover:text-foreground"
                   >
                     <span className="h-px w-0 bg-primary transition-all duration-300 group-hover:w-4" />
-                    {label}
+                    {nav(`links.${id}.label`)}
                   </a>
                 </li>
               ))}
@@ -113,10 +102,10 @@ export function Footer() {
 
           <div className="md:col-span-4">
             <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-              Servicios · <span className="font-jp">提供</span>
+              {t("servicesLabel")} · <span className="font-jp">{t("servicesLabelJp")}</span>
             </p>
             <ul className="mt-4 space-y-2.5">
-              {SERVICES.map((s) => (
+              {servicesList.map((s) => (
                 <li key={s} className="text-sm text-foreground/70">
                   {s}
                 </li>
@@ -127,7 +116,7 @@ export function Footer() {
                 href="#contact"
                 className="group mt-6 inline-flex items-center gap-3 border border-foreground bg-foreground px-5 py-3 text-sm font-medium text-background transition hover:bg-primary hover:border-primary"
               >
-                Cotiza tu proyecto
+                {t("cta")}
                 <span className="transition group-hover:translate-x-1">→</span>
               </a>
             </Magnetic>
@@ -152,13 +141,13 @@ export function Footer() {
 
         <div className="mt-8 flex flex-col items-start justify-between gap-4 border-t border-foreground/10 pt-6 md:flex-row md:items-center">
           <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-            © {year} Asahi Studio — Diseño + Código + IA · Made in México
+            © {year} {t("copyright")}
           </p>
           <a
             href="#top"
             className="group inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition hover:text-primary"
           >
-            Volver arriba
+            {t("backToTop")}
             <span className="inline-block transition group-hover:-translate-y-0.5">↑</span>
           </a>
         </div>

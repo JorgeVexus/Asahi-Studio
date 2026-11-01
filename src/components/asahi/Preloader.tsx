@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 export function Preloader() {
+  const t = useTranslations("preloader");
   const [progress, setProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -41,9 +45,9 @@ export function Preloader() {
         >
           {/* Top Bar */}
           <div className="absolute top-0 left-0 right-0 flex justify-between items-start p-6 md:p-10 font-mono text-[10px] uppercase tracking-[0.3em] text-foreground/50">
-            <div>Asahi Studio</div>
-            <div className="font-jp tracking-widest hidden sm:block text-xs">朝日 - 旭</div>
-            <div>MX — 2026</div>
+            <div>{t("brand")}</div>
+            <div className="font-jp tracking-widest hidden sm:block text-xs">{t("jp")}</div>
+            <div>{t("region")}</div>
           </div>
 
           {/* Centro: Sol y Logo */}
@@ -73,7 +77,7 @@ export function Preloader() {
           {/* Elementos Inferiores: Texto y Barra */}
           <div className="absolute bottom-0 left-0 w-full">
             <div className="flex justify-between items-center px-6 md:px-10 pb-4 font-mono text-[10px] uppercase tracking-[0.3em] text-foreground/50">
-              <div>Cargando Experiencia</div>
+              <div>{t("loading")}</div>
               <div>{progress < 100 ? `0${progress}`.slice(-2) : "100"}</div>
             </div>
             {/* Barra inferior */}

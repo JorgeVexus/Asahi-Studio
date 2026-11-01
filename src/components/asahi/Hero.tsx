@@ -1,5 +1,8 @@
+"use client";
+
 import { animate, motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Magnetic } from "./Magnetic";
 
 function Counter({
@@ -87,6 +90,7 @@ function SunSvg() {
 }
 
 export function Hero() {
+  const t = useTranslations("hero");
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const sunY = useTransform(scrollYProgress, [0, 1], [0, 300]);
@@ -130,12 +134,15 @@ export function Hero() {
           transition={{ delay: 0.2 }}
           className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground"
         >
-          <span className="font-jp text-foreground/80">朝日スタジオ</span> · Estudio digital · MX
+          <span className="font-jp text-foreground/80">{t("eyebrowJp")}</span> · {t("eyebrow")}
         </motion.p>
 
         <h1 className="mt-6 font-display text-[clamp(3rem,10vw,9rem)] font-semibold leading-[0.9] tracking-tight text-balance">
-          {["Landing", "pages"].map((w, i) => (
-            <span key={w} className="inline-block overflow-hidden align-top">
+          {[t("titleLine1"), t("titleLine2")].map((w, i) => (
+            <span
+              key={w}
+              className="-mb-[0.25em] inline-block overflow-hidden pb-[0.25em] align-top"
+            >
               <motion.span
                 initial={{ y: "110%" }}
                 animate={{ y: 0 }}
@@ -147,14 +154,15 @@ export function Hero() {
             </span>
           ))}
           <br />
-          <span className="inline-block overflow-hidden align-top">
+          <span className="-mb-[0.25em] inline-block overflow-hidden pb-[0.25em] align-top">
             <motion.span
               initial={{ y: "110%" }}
               animate={{ y: 0 }}
               transition={{ delay: 0.3, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
               className="inline-block"
             >
-              que <span className="italic text-primary">convierten</span>
+              {t("titleLine3Pre")}{" "}
+              <span className="italic text-primary">{t("titleLine3Highlight")}</span>
               <span className="text-primary">.</span>
             </motion.span>
           </span>
@@ -167,9 +175,7 @@ export function Hero() {
             transition={{ delay: 0.6 }}
             className="md:col-span-5 md:col-start-1 text-lg text-foreground/70 text-pretty md:text-xl"
           >
-            Diseñamos y desarrollamos sitios rápidos, estratégicos y optimizados para generar
-            clientes reales. Webflow, Next.js, automatizaciones e IA — soluciones a medida, nunca
-            plantillas.
+            {t("description")}
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -182,7 +188,7 @@ export function Hero() {
                 href="#contact"
                 className="group inline-flex items-center gap-3 bg-foreground px-6 py-4 text-base font-medium text-background transition hover:bg-primary"
               >
-                Cotiza tu proyecto
+                {t("ctaPrimary")}
                 <span className="transition group-hover:translate-x-1">→</span>
               </a>
             </Magnetic>
@@ -190,20 +196,20 @@ export function Hero() {
               href="#work"
               className="text-sm text-foreground/60 underline-offset-4 hover:underline"
             >
-              Ver trabajo reciente ↓
+              {t("ctaSecondary")}
             </a>
           </motion.div>
         </div>
 
         <div className="mt-20 grid grid-cols-2 gap-px overflow-hidden border-y border-foreground/15 bg-foreground/15 md:grid-cols-4">
           {[
-            { render: <Counter value={98} />, label: "PageSpeed promedio" },
+            { render: <Counter value={98} />, label: t("stats.pagespeed") },
             {
               render: <Counter value={3.2} decimals={1} suffix="x" />,
-              label: "Lift en conversión",
+              label: t("stats.conversion"),
             },
-            { render: <Counter value={14} suffix="d" />, label: "Time-to-launch" },
-            { render: <>MX</>, label: "Hecho en México" },
+            { render: <Counter value={14} suffix="d" />, label: t("stats.timeToLaunch") },
+            { render: <>MX</>, label: t("stats.madeIn") },
           ].map(({ render, label }, i) => (
             <motion.div
               key={label}
@@ -227,7 +233,7 @@ export function Hero() {
         style={{ opacity }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-foreground/40"
       >
-        <span className="font-mono text-[10px] uppercase tracking-widest">Scroll</span>
+        <span className="font-mono text-[10px] uppercase tracking-widest">{t("scroll")}</span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
